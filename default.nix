@@ -4,8 +4,7 @@ with pkgs;
 
 rec {
 	kotatogram-desktop = qt5.callPackage ./kotatogram-desktop {
-		libtgvoip = libtgvoip;
-		rlottie = rlottie;
+		inherit libtgvoip rlottie;
 	};
 	libtgvoip = callPackage ./libtgvoip {};
 	rlottie = callPackage ./rlottie {};
