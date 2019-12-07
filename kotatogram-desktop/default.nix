@@ -1,7 +1,7 @@
 { mkDerivation, lib, fetchFromGitHub, fetchsvn, fetchpatch
 , pkgconfig, pythonPackages, cmake, ninja, gcc9, qtbase
 , qtimageformats, ffmpeg_4, openalSoft, lzma, lz4, zlib
-, minizip, openssl, libtgvoip, rlottie, range-v3
+, minizip, openssl, libtgvoip, rlottie-tdesktop, range-v3
 }:
 
 with lib;
@@ -38,7 +38,7 @@ mkDerivation rec {
 
   buildInputs = [
     qtbase qtimageformats ffmpeg_4 openalSoft lzma
-    lz4 zlib minizip openssl libtgvoip rlottie range-v3
+    lz4 zlib minizip openssl libtgvoip rlottie-tdesktop range-v3
   ];
 
   enableParallelBuilding = true;
