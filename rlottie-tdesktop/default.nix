@@ -23,7 +23,7 @@ stdenv.mkDerivation rec {
     longDescription = ''
       rlottie is a platform independent standalone c++ library for rendering vector based animations and art in realtime.
     '';
-    license = licenses.lgpl2;
+    license = licenses.lgpl21;
     platforms = platforms.linux;
     homepage = https://github.com/desktop-app/rlottie;
   };
