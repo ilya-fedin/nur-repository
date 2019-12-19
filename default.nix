@@ -3,6 +3,8 @@
 with pkgs;
 
 rec {
+	modules = import ./modules;
+
 	kotatogram-desktop = qt5.callPackage ./pkgs/kotatogram-desktop {
 		inherit libtgvoip rlottie-tdesktop;
 	};
