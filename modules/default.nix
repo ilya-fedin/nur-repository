@@ -5,4 +5,5 @@
   cascadia-code-fallback = import ./cascadia-code-fallback;
   iris-driver = import ./iris-driver;
   io-scheduler = import ./io-scheduler;
+  nixpkgs-niv = import ./nixpkgs-niv;
 }
