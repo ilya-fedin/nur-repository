@@ -12,4 +12,6 @@ rec {
   libtgvoip = callPackage ./pkgs/libtgvoip {};
 
   rlottie-tdesktop = callPackage ./pkgs/rlottie-tdesktop {};
+
+  silver = callPackage ./pkgs/silver {};
 }
