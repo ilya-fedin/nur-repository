@@ -63475,7 +63475,7 @@ index 000000000..cb721e590
 +if (TDESKTOP_DISABLE_GTK_INTEGRATION)
 +    target_compile_definitions(Telegram PRIVATE TDESKTOP_DISABLE_GTK_INTEGRATION)
 +endif()
-Submodule Telegram/codegen f1202034e..ee55a0b69:
+Submodule Telegram/codegen f1202034e..d14ae77ad:
 diff --git a/Telegram/codegen/CMakeLists.txt b/Telegram/codegen/CMakeLists.txt
 new file mode 100644
 index 0000000..59c0ce8
@@ -63587,8 +63587,26 @@ index 0000000..058e860
 +    desktop-app::codegen_common
 +    desktop-app::external_qt
 +)
+diff --git a/Telegram/codegen/codegen/emoji/data.cpp b/Telegram/codegen/codegen/emoji/data.cpp
+index 182e43a..d7d0ab8 100644
+--- a/Telegram/codegen/codegen/emoji/data.cpp
++++ b/Telegram/codegen/codegen/emoji/data.cpp
+@@ -2054,6 +2054,13 @@ void appendCategory(
+ 				return;
+ 			}
+ 			append(baseId, *from++);
++			// A few uncolored emoji contain two kPostfix.
++			// (:(wo)man_lifting_weights:, :(wo)man_golfing:
++			//  :(wo)man_bouncing_ball:, :(wo)man_detective:)
++			// But colored emoji should have only one kPostfix.
++			if (std::count(from, to, kPostfix) == 2 && *from == kPostfix) {
++				from++;
++			}
+ 			for (auto color : Colors) {
+ 				auto colored = Emoji();
+ 				colored.id = baseId;
 diff --git a/Telegram/codegen/codegen/emoji/generator.cpp b/Telegram/codegen/codegen/emoji/generator.cpp
-index c0ee43f..b5c3940 100644
+index c0ee43f..dafa19c 100644
 --- a/Telegram/codegen/codegen/emoji/generator.cpp
 +++ b/Telegram/codegen/codegen/emoji/generator.cpp
 @@ -181,16 +181,11 @@ int Generator::generate() {
@@ -63613,6 +63631,15 @@ index c0ee43f..b5c3940 100644
  		return -1;
  	}
  
+@@ -299,7 +294,7 @@ bool Generator::writeImages() {
+ 				}
+ 			}
+ 		}
+-        if (needResave) {
++		if (needResave) {
+ 			QFile file(filename);
+ 			if (!file.open(QIODevice::WriteOnly)) {
+ 				logDataError() << "Could not open 'emoji" << postfix.toStdString() << ".webp'.";
 diff --git a/Telegram/codegen/codegen/lang/CMakeLists.txt b/Telegram/codegen/codegen/lang/CMakeLists.txt
 new file mode 100644
 index 0000000..d179abe
@@ -64492,13 +64519,13 @@ index 7d5dafaba..3669236f0 100644
          ],
        }],
      ],
-Submodule Telegram/lib_base a94ad7f81..78690f858:
+Submodule Telegram/lib_base a94ad7f81..baae6cdd9:
 diff --git a/Telegram/lib_base/CMakeLists.txt b/Telegram/lib_base/CMakeLists.txt
 new file mode 100644
-index 0000000..68473e8
+index 0000000..da416a7
 --- /dev/null
 +++ b/Telegram/lib_base/CMakeLists.txt
-@@ -0,0 +1,165 @@
+@@ -0,0 +1,161 @@
 +# This file is part of Desktop App Toolkit,
 +# a set of libraries for developing nice desktop applications.
 +#
@@ -64649,10 +64676,6 @@ index 0000000..68473e8
 +    desktop-app::external_gsl
 +    desktop-app::external_expected
 +)
-+
-+if (DESKTOP_APP_USE_GLIBC_WRAPS)
-+    target_link_libraries(lib_base PUBLIC desktop-app::linux_glibc_wraps)
-+endif()
 +
 +target_precompile_headers(lib_base_crash_report_writer PRIVATE ${src_loc}/base/base_pch.h)
 +nice_target_sources(lib_base_crash_report_writer ${src_loc}
@@ -64916,6 +64939,162 @@ index 9346426..c25b820 100644
  }
  
  } // namespace bytes
+diff --git a/Telegram/lib_base/base/platform/mac/base_info_mac.mm b/Telegram/lib_base/base/platform/mac/base_info_mac.mm
+index 5e38b06..7f6b2be 100644
+--- a/Telegram/lib_base/base/platform/mac/base_info_mac.mm
++++ b/Telegram/lib_base/base/platform/mac/base_info_mac.mm
+@@ -89,15 +89,15 @@ bool IsMacThatOrGreater() {
+ 
+ QString DeviceModelPretty() {
+ 	size_t length = 0;
+-    sysctlbyname("hw.model", nullptr, &length, nullptr, 0);
+-    if (length > 0) {
+-        QByteArray bytes(length, Qt::Uninitialized);
+-        sysctlbyname("hw.model", bytes.data(), &length, nullptr, 0);
++	sysctlbyname("hw.model", nullptr, &length, nullptr, 0);
++	if (length > 0) {
++		QByteArray bytes(length, Qt::Uninitialized);
++		sysctlbyname("hw.model", bytes.data(), &length, nullptr, 0);
+ 		const QString parsed = FromIdentifier(QString::fromUtf8(bytes));
+ 		if (!parsed.isEmpty()) {
+ 			return parsed;
+ 		}
+-    }
++	}
+ 	return "Mac";
+ }
+ 
+@@ -198,10 +198,11 @@ void Start(QJsonObject settings) {
+ 	NSNotificationCenter *center = [[NSWorkspace sharedWorkspace] notificationCenter];
+ 	Assert(center != nil);
+ 
+-	[center addObserver: GlobalWakeUpObserver
+-	        selector: @selector(receiveWakeNote:)
+-	        name: NSWorkspaceDidWakeNotification
+-	        object: nil];
++	[center
++		addObserver: GlobalWakeUpObserver
++		selector: @selector(receiveWakeNote:)
++		name: NSWorkspaceDidWakeNotification
++		object: nil];
+ 
+ 	Ensures(GlobalWakeUpObserver != nil);
+ }
+diff --git a/Telegram/lib_base/base/tests_main.cpp b/Telegram/lib_base/base/tests_main.cpp
+index 791cfd7..ffb3a88 100644
+--- a/Telegram/lib_base/base/tests_main.cpp
++++ b/Telegram/lib_base/base/tests_main.cpp
+@@ -24,61 +24,61 @@ void log(const char *message, const char *file, int line) {
+ 
+ namespace Catch {
+ 
+-	struct MinimalReporter : CompactReporter {
+-		MinimalReporter( ReporterConfig const& _config )
+-        : CompactReporter( _config )
+-        {}
++struct MinimalReporter : CompactReporter {
++	MinimalReporter( ReporterConfig const& _config )
++	: CompactReporter( _config )
++	{}
+ 
+-        virtual void testRunEnded( TestRunStats const& _testRunStats ) {
+-            printTotals( _testRunStats.totals );
+-        }
++	virtual void testRunEnded( TestRunStats const& _testRunStats ) {
++		printTotals( _testRunStats.totals );
++	}
+ 
+-    private:
+-        // Colour, message variants:
+-        // - white: No tests ran.
+-        // -   red: Failed [both/all] N test cases, failed [both/all] M assertions.
+-        // - white: Passed [both/all] N test cases (no assertions).
+-        // -   red: Failed N tests cases, failed M assertions.
+-        // - green: Passed [both/all] N tests cases with M assertions.
++private:
++	// Colour, message variants:
++	// - white: No tests ran.
++	// -   red: Failed [both/all] N test cases, failed [both/all] M assertions.
++	// - white: Passed [both/all] N test cases (no assertions).
++	// -   red: Failed N tests cases, failed M assertions.
++	// - green: Passed [both/all] N tests cases with M assertions.
+ 
+-        std::string bothOrAll( std::size_t count ) const {
+-            return count == 1 ? std::string() : count == 2 ? "both " : "all " ;
+-        }
++	std::string bothOrAll( std::size_t count ) const {
++		return count == 1 ? std::string() : count == 2 ? "both " : "all " ;
++	}
+ 
+-        void printTotals( const Totals& totals ) const {
+-            if( totals.testCases.total() == 0 ) {
+-            }
+-            else if( totals.testCases.failed == totals.testCases.total() ) {
+-                Colour colour( Colour::ResultError );
+-                const std::string qualify_assertions_failed =
+-                    totals.assertions.failed == totals.assertions.total() ?
+-                        bothOrAll( totals.assertions.failed ) : std::string();
+-                stream <<
+-                    "Failed " << bothOrAll( totals.testCases.failed )
+-                              << pluralise( totals.testCases.failed, "test case"  ) << ", "
+-                    "failed " << qualify_assertions_failed <<
+-                                 pluralise( totals.assertions.failed, "assertion" ) << '.';
+-            }
+-            else if( totals.assertions.total() == 0 ) {
+-                stream <<
+-                    "Passed " << bothOrAll( totals.testCases.total() )
+-                              << pluralise( totals.testCases.total(), "test case" )
+-                              << " (no assertions).";
+-            }
+-            else if( totals.assertions.failed ) {
+-                Colour colour( Colour::ResultError );
+-                stream <<
+-                    "Failed " << pluralise( totals.testCases.failed, "test case"  ) << ", "
+-                    "failed " << pluralise( totals.assertions.failed, "assertion" ) << '.';
+-            }
+-            else {
+-            }
+-        }
+-    };
++	void printTotals( const Totals& totals ) const {
++		if( totals.testCases.total() == 0 ) {
++		}
++		else if( totals.testCases.failed == totals.testCases.total() ) {
++			Colour colour( Colour::ResultError );
++			const std::string qualify_assertions_failed =
++				totals.assertions.failed == totals.assertions.total() ?
++					bothOrAll( totals.assertions.failed ) : std::string();
++			stream <<
++				"Failed " << bothOrAll( totals.testCases.failed )
++							<< pluralise( totals.testCases.failed, "test case"  ) << ", "
++				"failed " << qualify_assertions_failed <<
++								pluralise( totals.assertions.failed, "assertion" ) << '.';
++		}
++		else if( totals.assertions.total() == 0 ) {
++			stream <<
++				"Passed " << bothOrAll( totals.testCases.total() )
++							<< pluralise( totals.testCases.total(), "test case" )
++							<< " (no assertions).";
++		}
++		else if( totals.assertions.failed ) {
++			Colour colour( Colour::ResultError );
++			stream <<
++				"Failed " << pluralise( totals.testCases.failed, "test case"  ) << ", "
++				"failed " << pluralise( totals.assertions.failed, "assertion" ) << '.';
++		}
++		else {
++		}
++	}
++};
+ 
+-    INTERNAL_CATCH_REGISTER_REPORTER( "minimal", MinimalReporter )
++INTERNAL_CATCH_REGISTER_REPORTER( "minimal", MinimalReporter )
+ 
+-} // end namespace Catch
++} // namespace Catch
+ 
+ int main(int argc, const char *argv[]) {
+ 	auto touchFile = QString();
 diff --git a/Telegram/lib_base/base/variant.h b/Telegram/lib_base/base/variant.h
 index ac83b3e..f011c9d 100644
 --- a/Telegram/lib_base/base/variant.h
@@ -65549,7 +65728,7 @@ index 0000000..09ab7e0
 +[[nodiscard]] QImage ReplaceCenter(QImage qr, const QImage &center);
 +
 +} // namespace Qr
-Submodule Telegram/lib_rpl 01323035b..bd850834f:
+Submodule Telegram/lib_rpl 01323035b..2888aabf2:
 diff --git a/Telegram/lib_rpl/CMakeLists.txt b/Telegram/lib_rpl/CMakeLists.txt
 new file mode 100644
 index 0000000..051ade3
@@ -65609,7 +65788,20 @@ index 0000000..051ade3
 +INTERFACE
 +    desktop-app::external_gsl
 +)
-Submodule Telegram/lib_spellcheck 0269666de..3ed9533de:
+diff --git a/Telegram/lib_rpl/rpl/merge.h b/Telegram/lib_rpl/rpl/merge.h
+index ac90d25..87f86bc 100644
+--- a/Telegram/lib_rpl/rpl/merge.h
++++ b/Telegram/lib_rpl/rpl/merge.h
+@@ -10,7 +10,7 @@
+ 
+ namespace rpl {
+ namespace details {
+-	
++
+ struct merge_state {
+ 	merge_state(int working) : working(working) {
+ 	}
+Submodule Telegram/lib_spellcheck 0269666de..d305de6d6:
 diff --git a/Telegram/lib_spellcheck/CMakeLists.txt b/Telegram/lib_spellcheck/CMakeLists.txt
 new file mode 100644
 index 0000000..282e732
@@ -66976,7 +67168,7 @@ index 6a2ffdd..21cc158 100644
  
  } // namespace Spellchecker
 diff --git a/Telegram/lib_spellcheck/spellcheck/spelling_highlighter.cpp b/Telegram/lib_spellcheck/spellcheck/spelling_highlighter.cpp
-index ca5d078..40645f9 100644
+index ca5d078..f856d89 100644
 --- a/Telegram/lib_spellcheck/spellcheck/spelling_highlighter.cpp
 +++ b/Telegram/lib_spellcheck/spellcheck/spelling_highlighter.cpp
 @@ -10,6 +10,7 @@
@@ -67085,7 +67277,21 @@ index ca5d078..40645f9 100644
  
  	_textEdit->installEventFilter(this);
  	_textEdit->viewport()->installEventFilter(this);
-@@ -138,21 +181,89 @@ SpellingHighlighter::SpellingHighlighter(
+@@ -130,7 +173,12 @@ SpellingHighlighter::SpellingHighlighter(
+ 
+ 	// Use the patched SpellCheckUnderline style.
+ 	_misspelledFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
+-	_misspelledFormat.setUnderlineColor(st::spellUnderline->c);
++	style::PaletteChanged(
++	) | rpl::start_with_next([=] {
++		updatePalette();
++		rehighlight();
++	}, _lifetime);
++	updatePalette();
+ 
+ 	_field->documentContentsChanges(
+ 	) | rpl::start_with_next([=](const auto &value) {
+@@ -138,21 +186,93 @@ SpellingHighlighter::SpellingHighlighter(
  		contentsChange(pos, removed, added);
  	}, _lifetime);
  
@@ -67115,6 +67321,10 @@ index ca5d078..40645f9 100644
  	checkCurrentText();
  }
  
++void SpellingHighlighter::updatePalette() {
++	_misspelledFormat.setUnderlineColor(st::spellUnderline->c);
++}
++
  void SpellingHighlighter::contentsChange(int pos, int removed, int added) {
 -	if (documentText().isEmpty()) {
 +	if (document()->isEmpty()) {
@@ -67176,7 +67386,7 @@ index ca5d078..40645f9 100644
  	const auto shift = [&](auto chars) {
  		ranges::for_each(_cachedRanges, [&](auto &range) {
  			if (range.first >= pos + removed) {
-@@ -192,7 +303,10 @@ void SpellingHighlighter::contentsChange(int pos, int removed, int added) {
+@@ -192,7 +312,10 @@ void SpellingHighlighter::contentsChange(int pos, int removed, int added) {
  		shift(-removed);
  	}
  
@@ -67188,7 +67398,7 @@ index ca5d078..40645f9 100644
  
  	_addedSymbols += added;
  	_removedSymbols += removed;
-@@ -240,66 +354,40 @@ void SpellingHighlighter::checkChangedText() {
+@@ -240,66 +363,40 @@ void SpellingHighlighter::checkChangedText() {
  	}
  
  	const auto wordUnderCursor = getWordUnderPosition(pos);
@@ -67267,7 +67477,7 @@ index ca5d078..40645f9 100644
  	}
  }
  
-@@ -310,32 +398,50 @@ MisspelledWords SpellingHighlighter::filterSkippableWords(
+@@ -310,32 +407,50 @@ MisspelledWords SpellingHighlighter::filterSkippableWords(
  		return MisspelledWords();
  	}
  	return ranges | ranges::view::filter([&](const auto &range) {
@@ -67329,7 +67539,7 @@ index ca5d078..40645f9 100644
  			&misspelledWordRanges);
  		if (rangesOffset) {
  			ranges::for_each(misspelledWordRanges, [&](auto &&range) {
-@@ -343,33 +449,99 @@ void SpellingHighlighter::invokeCheckText(
+@@ -343,33 +458,99 @@ void SpellingHighlighter::invokeCheckText(
  			});
  		}
  		crl::on_main(weak, [=,
@@ -67439,7 +67649,7 @@ index ca5d078..40645f9 100644
  			continue;
  		}
  		const auto format = fragment.charFormat();
-@@ -386,36 +558,30 @@ bool SpellingHighlighter::hasUnspellcheckableTag(int begin, int length) {
+@@ -386,36 +567,30 @@ bool SpellingHighlighter::hasUnspellcheckableTag(int begin, int length) {
  }
  
  MisspelledWord SpellingHighlighter::getWordUnderPosition(int position) {
@@ -67491,7 +67701,7 @@ index ca5d078..40645f9 100644
  
  	setCurrentBlockState(0);
  }
-@@ -470,12 +636,57 @@ void SpellingHighlighter::setEnabled(bool enabled) {
+@@ -470,12 +645,57 @@ void SpellingHighlighter::setEnabled(bool enabled) {
  		checkCurrentText();
  	} else {
  		_cachedRanges.clear();
@@ -67551,7 +67761,7 @@ index ca5d078..40645f9 100644
  }
  
  void SpellingHighlighter::addSpellcheckerActions(
-@@ -483,13 +694,26 @@ void SpellingHighlighter::addSpellcheckerActions(
+@@ -483,13 +703,26 @@ void SpellingHighlighter::addSpellcheckerActions(
  		QTextCursor cursorForPosition,
  		Fn<void()> showMenuCallback) {
  
@@ -67579,7 +67789,7 @@ index ca5d078..40645f9 100644
  		if (isCorrect) {
  			if (Platform::Spellchecker::IsWordInDictionary(word)) {
  				menu->addSeparator();
-@@ -541,13 +765,10 @@ void SpellingHighlighter::addSpellcheckerActions(
+@@ -541,13 +774,10 @@ void SpellingHighlighter::addSpellcheckerActions(
  	const auto weak = Ui::MakeWeak(this);
  	crl::async([=,
  		newTextCursor = std::move(cursorForPosition),
@@ -67597,7 +67807,7 @@ index ca5d078..40645f9 100644
  		if (!isCorrect) {
  			Platform::Spellchecker::FillSuggestionList(word, &suggestions);
 diff --git a/Telegram/lib_spellcheck/spellcheck/spelling_highlighter.h b/Telegram/lib_spellcheck/spellcheck/spelling_highlighter.h
-index 33ef2b2..9825a8a 100644
+index 33ef2b2..0c3c0a4 100644
 --- a/Telegram/lib_spellcheck/spellcheck/spelling_highlighter.h
 +++ b/Telegram/lib_spellcheck/spellcheck/spelling_highlighter.h
 @@ -14,6 +14,7 @@
@@ -67608,7 +67818,12 @@ index 33ef2b2..9825a8a 100644
  #include <QtWidgets/QMenu>
  #include <QtWidgets/QTextEdit>
  
-@@ -76,22 +77,37 @@ private:
+@@ -72,26 +73,42 @@ protected:
+ 	bool eventFilter(QObject *o, QEvent *e) override;
+ 
+ private:
++	void updatePalette();
+ 	void setEnabled(bool enabled);
  	void checkText(const QString &text);
  
  	void invokeCheckText(
@@ -73561,7 +73776,7 @@ index 5241eca18..dbe1796b9 100644
  1.9.1 beta (06.11.19)
  
  - Bug fixes and other minor improvements.
-Submodule cmake 000000000...449066752 (new submodule)
+Submodule cmake 000000000...b087501d6 (new submodule)
 diff --git a/cmake/CMakeLists.txt b/cmake/CMakeLists.txt
 new file mode 100644
 index 0000000..037b2eb
@@ -74888,7 +75103,7 @@ index 0000000..fe4cf49
 +}
 diff --git a/cmake/linux_glibc_wraps/platform/linux/linux_glibc_wraps_32.c b/cmake/linux_glibc_wraps/platform/linux/linux_glibc_wraps_32.c
 new file mode 100644
-index 0000000..a50f265
+index 0000000..2a0890f
 --- /dev/null
 +++ b/cmake/linux_glibc_wraps/platform/linux/linux_glibc_wraps_32.c
 @@ -0,0 +1,49 @@
@@ -74913,7 +75128,7 @@ index 0000000..a50f265
 +__asm__(".symver __clock_gettime_glibc_old,clock_gettime@GLIBC_" GETTIME_GLIBC_VERSION);
 +
 +int __wrap_clock_gettime(clockid_t clk_id, struct timespec *tp) {
-+        return __clock_gettime_glibc_old(clk_id, tp);
++	return __clock_gettime_glibc_old(clk_id, tp);
 +}
 +
 +uint64_t __udivmoddi4(uint64_t num, uint64_t den, uint64_t *rem_p);
@@ -74943,7 +75158,7 @@ index 0000000..a50f265
 +
 diff --git a/cmake/linux_glibc_wraps/platform/linux/linux_glibc_wraps_64.c b/cmake/linux_glibc_wraps/platform/linux/linux_glibc_wraps_64.c
 new file mode 100644
-index 0000000..b04f513
+index 0000000..2d1ca15
 --- /dev/null
 +++ b/cmake/linux_glibc_wraps/platform/linux/linux_glibc_wraps_64.c
 @@ -0,0 +1,52 @@
@@ -74971,32 +75186,32 @@ index 0000000..b04f513
 +
 +
 +int __wrap_clock_gettime(clockid_t clk_id, struct timespec *tp) {
-+        return __clock_gettime_glibc_old(clk_id, tp);
++	return __clock_gettime_glibc_old(clk_id, tp);
 +}
 +
 +UTItype __udivmodti4(UTItype num, UTItype den, UTItype *rem_p);
 +
 +TItype __wrap___divmodti4(TItype num, TItype den, TItype *rem_p) {
-+        int minus = 0;
-+        TItype v;
++	int minus = 0;
++	TItype v;
 +
-+        if (num < 0) {
-+                num = -num;
-+                minus = 1;
-+        }
-+        if (den < 0) {
-+                den = -den;
-+                minus ^= 1;
-+        }
++	if (num < 0) {
++		num = -num;
++		minus = 1;
++	}
++	if (den < 0) {
++		den = -den;
++		minus ^= 1;
++	}
 +
-+        v = __udivmodti4(num, den, (UTItype *)rem_p);
-+        if (minus) {
-+                v = -v;
-+                if (rem_p)
-+                        *rem_p = -(*rem_p);
-+        }
++	v = __udivmodti4(num, den, (UTItype *)rem_p);
++	if (minus) {
++		v = -v;
++		if (rem_p)
++			*rem_p = -(*rem_p);
++	}
 +
-+        return v;
++	return v;
 +}
 +
 diff --git a/cmake/nice_target_sources.cmake b/cmake/nice_target_sources.cmake
