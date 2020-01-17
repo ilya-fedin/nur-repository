@@ -1,8 +1,8 @@
-{ mkDerivation, lib, fetchFromGitHub, fetchsvn, fetchurl
-, pkgconfig, python3, pythonPackages, cmake, ninja, dos2unix, wrapGAppsHook
-, qtbase, qtimageformats, gtk3, libappindicator-gtk3, libnotify, sonnet
-, enchant, xdg_utils, desktop-file-utils, ffmpeg, openalSoft, lzma, lz4
-, xxHash, zlib, minizip, openssl, libtgvoip, rlottie-tdesktop, range-v3
+{ mkDerivation, lib, fetchFromGitHub, fetchsvn, fetchurl, pkgconfig, python3
+, pythonPackages, cmake, ninja, dos2unix, wrapGAppsHook, qtbase, qtimageformats
+, gtk3, libappindicator-gtk3, libnotify, enchant, xdg_utils, desktop-file-utils
+, ffmpeg, openalSoft, lzma, lz4, xxHash, zlib, minizip, openssl, libtgvoip
+, rlottie-tdesktop, range-v3
 , integrateWithSystem ? true
 }:
 
@@ -46,7 +46,7 @@ let
   ] ++ optional integrateWithSystem "TDESKTOP_DISABLE_GTK_INTEGRATION");
 in mkDerivation rec {
   pname = "kotatogram-desktop";
-  version = "${ver}-5";
+  version = "${ver}-6";
 
   src = fetchFromGitHub {
     owner = "kotatogram";
@@ -57,16 +57,11 @@ in mkDerivation rec {
   };
 
   patches = optionals integrateWithSystem [
-    ./update-to-v1.9.3.patch
-    ./cmake-rules-fix.patch
-    ./remove-qt-config.patch
-    ./fix-spellcheck.patch
-    ./fix-notifications.patch
+    ./update-to-v1.9.4.patch
     ./Use-system-font.patch
     ./system-tray-icon.patch
     ./linux-autostart.patch
     ./Use-system-font-by-default.patch
-    ./Use-native-notifications-by-default.patch
   ] ++ optionals (!integrateWithSystem) [
     ./tdesktop.patch
     ./fix-glib-function.patch
@@ -102,7 +97,7 @@ in mkDerivation rec {
   buildInputs = [
     qtbase qtimageformats ffmpeg openalSoft lzma lz4 xxHash
     zlib minizip openssl libtgvoip rlottie-tdesktop range-v3
-  ] ++ optionals integrateWithSystem [ sonnet enchant ]
+  ] ++ optional integrateWithSystem enchant
     ++ optionals (!integrateWithSystem) [ gtk3 libappindicator-gtk3 ];
 
   enableParallelBuilding = true;
@@ -158,7 +153,6 @@ in mkDerivation rec {
     install -Dm644 "$src/lib/xdg/kotatogramdesktop.desktop" "$out/share/applications/kotatogramdesktop.desktop"
     install -Dm644 "$src/lib/xdg/tg.protocol" "$out/share/kservices5/tg.protocol"
     substituteInPlace "$out/share/kservices5/tg.protocol" --replace /usr/bin "$out/bin"
-    install -Dm644 "${getBin sonnet}/share/kf5/sonnet/trigrams.map" "$out/share/kf5/sonnet/trigrams.map"
     for icon_size in 16 32 48 64 128 256 512; do
       install -Dm644 "$src/Telegram/Resources/art/icon''${icon_size}.png" "$out/share/icons/hicolor/''${icon_size}x''${icon_size}/apps/kotatogram.png"
     done
