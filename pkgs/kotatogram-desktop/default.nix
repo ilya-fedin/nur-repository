@@ -112,7 +112,7 @@ in stdenv.mkDerivation rec {
   patches = [
     ./shortcuts-binary-path.patch
     ./0001-Add-an-option-to-hide-messages-from-blocked-users-in.patch
-  ] + lib.optionals stdenv.isDarwin [
+  ] ++ lib.optionals stdenv.isDarwin [
     # let it build with nixpkgs 10.12 sdk
     ./kotato-10.12-sdk.patch
   ];
