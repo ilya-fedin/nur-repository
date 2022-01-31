@@ -30,5 +30,6 @@ stdenv.mkDerivation rec {
     platforms = platforms.linux;
     homepage = https://github.com/wmww/mirco;
     maintainers = with maintainers; [ ilya-fedin ];
+    broken = true;
   };
 }
