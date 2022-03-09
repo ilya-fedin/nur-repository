@@ -1,4 +1,4 @@
-From 71e1042e7be03ca6bb3c7f94ddc337d7e9fc1529 Mon Sep 17 00:00:00 2001
+From e6697d3b6322cc2018b7dfa07a7135bd03372dc6 Mon Sep 17 00:00:00 2001
 From: Ilya Fedin <fedin-ilja2010@ya.ru>
 Date: Sun, 14 Jun 2020 03:25:53 +0400
 Subject: [PATCH] Add an option to hide messages from blocked users in groups
@@ -6,13 +6,13 @@ Subject: [PATCH] Add an option to hide messages from blocked users in groups
 ---
  Telegram/Resources/langs/rewrites/en.json     |  1 +
  Telegram/Resources/langs/rewrites/ru.json     |  1 +
- .../history/history_item_components.cpp       |  7 +++-
+ .../history/history_item_components.cpp       |  8 +++-
  .../SourceFiles/history/history_widget.cpp    | 30 ++++++++++++++
  .../history/view/history_view_element.cpp     |  7 ++++
  .../SourceFiles/kotato/kotato_settings.cpp    |  3 ++
  .../kotato/kotato_settings_menu.cpp           |  1 +
  Telegram/SourceFiles/main/main_session.cpp    | 40 +++++++++++++++++++
- 8 files changed, 88 insertions(+), 2 deletions(-)
+ 8 files changed, 89 insertions(+), 2 deletions(-)
 
 diff --git a/Telegram/Resources/langs/rewrites/en.json b/Telegram/Resources/langs/rewrites/en.json
 index e50ac3e25..bd67e4d27 100644
@@ -39,10 +39,10 @@ index 5f4c7e775..cb1509722 100644
  	"ktg_settings_forward_retain_selection": "Сохранять выделение после пересылки",
  	"ktg_settings_forward_chat_on_click": "Открывать чат по клику",
 diff --git a/Telegram/SourceFiles/history/history_item_components.cpp b/Telegram/SourceFiles/history/history_item_components.cpp
-index 09e2fe34e..91338b8c7 100644
+index 09e2fe34e..19abfdd95 100644
 --- a/Telegram/SourceFiles/history/history_item_components.cpp
 +++ b/Telegram/SourceFiles/history/history_item_components.cpp
-@@ -334,7 +334,10 @@ void HistoryMessageReply::paint(
+@@ -334,7 +334,11 @@ void HistoryMessageReply::paint(
  	p.fillRect(rbar, bar);
  
  	if (w > st::msgReplyBarSkip) {
@@ -50,16 +50,17 @@ index 09e2fe34e..91338b8c7 100644
 +		auto blocked = replyToMsg
 +			&& replyToMsg->from()->isUser()
 +			&& replyToMsg->from()->asUser()->isBlocked();
-+		if (replyToMsg && (!blocked || !BlockUsersInGroups())) {
++		const auto blockUsersInGroups = ::Kotato::JsonSettings::GetBool("block_users_in_groups");
++		if (replyToMsg && (!blocked || !blockUsersInGroups)) {
  			auto hasPreview = replyToMsg->media() ? replyToMsg->media()->hasReplyPreview() : false;
  			if (hasPreview && w < st::msgReplyBarSkip + st::msgReplyBarSize.height()) {
  				hasPreview = false;
-@@ -380,7 +383,7 @@ void HistoryMessageReply::paint(
+@@ -380,7 +384,7 @@ void HistoryMessageReply::paint(
  			p.setPen(inBubble
  				? stm->msgDateFg
  				: st->msgDateImgFg());
 -			p.drawTextLeft(x + st::msgReplyBarSkip, y + st::msgReplyPadding.top() + (st::msgReplyBarSize.height() - st::msgDateFont->height) / 2, w + 2 * x, st::msgDateFont->elided(replyToMsgId ? tr::lng_profile_loading(tr::now) : tr::lng_deleted_message(tr::now), w - st::msgReplyBarSkip));
-+			p.drawTextLeft(x + st::msgReplyBarSkip, y + st::msgReplyPadding.top() + (st::msgReplyBarSize.height() - st::msgDateFont->height) / 2, w + 2 * x, st::msgDateFont->elided((replyToMsgId && (!blocked || !BlockUsersInGroups())) ? tr::lng_profile_loading(tr::now) : tr::lng_deleted_message(tr::now), w - st::msgReplyBarSkip));
++			p.drawTextLeft(x + st::msgReplyBarSkip, y + st::msgReplyPadding.top() + (st::msgReplyBarSize.height() - st::msgDateFont->height) / 2, w + 2 * x, st::msgDateFont->elided((replyToMsgId && (!blocked || !blockUsersInGroups)) ? tr::lng_profile_loading(tr::now) : tr::lng_deleted_message(tr::now), w - st::msgReplyBarSkip));
  		}
  	}
  }
@@ -105,7 +106,7 @@ index c09939134..79e020277 100644
  	) | rpl::start_with_next([=](not_null<HistoryItem*> item) {
  		if (const auto view = item->mainView()) {
 diff --git a/Telegram/SourceFiles/history/view/history_view_element.cpp b/Telegram/SourceFiles/history/view/history_view_element.cpp
-index f6938da0c..cf331b28d 100644
+index f6938da0c..975d502ae 100644
 --- a/Telegram/SourceFiles/history/view/history_view_element.cpp
 +++ b/Telegram/SourceFiles/history/view/history_view_element.cpp
 @@ -35,6 +35,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
@@ -120,7 +121,7 @@ index f6938da0c..cf331b28d 100644
  }
  
  bool Element::isHidden() const {
-+	if (BlockUsersInGroups()
++	if (::Kotato::JsonSettings::GetBool("block_users_in_groups")
 +		&& data()->from()->isUser()
 +		&& data()->from()->asUser()->isBlocked()) {
 +		return true;
