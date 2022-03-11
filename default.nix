@@ -7,21 +7,15 @@ rec {
 
   overlays = import ./overlays;
 
-  cascadia-code-nerdfont = runCommand "cascadia-code-nerdfont" {} ''
-    mkdir -p "$out/share/fonts"
-    font_regexp='.*CascadiaCode\(Italic\)?\.\(ttf\|ttc\|otf\|pcf\|pfa\|pfb\|bdf\)\(\.gz\)?'
-    find ${cascadia-code} -regex "$font_regexp" \
-      -exec ${nerd-font-patcher}/bin/nerd-font-patcher -c -out "$out/share/fonts" '{}' \;
-  '';
+  cascadia-code-powerline = cascadia-code.overrideAttrs(_: {
+    postFetch = ''
+      mkdir -p $out/share/fonts/
+      unzip -j $downloadedFile CascadiaCodePL.ttf -d $out/share/fonts/truetype
+      unzip -j $downloadedFile CascadiaCodePLItalic.ttf -d $out/share/fonts/truetype
+    '';
+  });
 
   exo2 = callPackage ./pkgs/exo2 {};
-
-  exo2-nerdfont = runCommand "exo2-nerdfont" {} ''
-    mkdir -p "$out/share/fonts"
-    font_regexp='.*\.\(ttf\|ttc\|otf\|pcf\|pfa\|pfb\|bdf\)\(\.gz\)?'
-    find ${exo2} -regex "$font_regexp" \
-      -exec ${nerd-font-patcher}/bin/nerd-font-patcher -c -out "$out/share/fonts" '{}' \;
-  '';
 
   gtk-layer-background = callPackage ./pkgs/gtk-layer-background {};
 
