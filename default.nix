@@ -48,6 +48,19 @@ rec {
 
   silver = callPackage ./pkgs/silver {};
 
+  ttf-croscore = noto-fonts.overrideAttrs(oldAttrs: {
+    pname = "ttf-croscore";
+
+    installPhase = ''
+      install -m444 -Dt $out/share/fonts/truetype/croscore hinted/{Arimo,Cousine,Tinos}/*.ttf
+    '';
+
+    meta = oldAttrs.meta // {
+      description = "Chrome OS core fonts";
+      longDescription = "This package includes the Arimo, Cousine, and Tinos fonts.";
+    };
+  });
+
   virtualboxWithExtpack = virtualbox.override {
     enableHardening = true;
     extensionPack = virtualboxExtpack;
