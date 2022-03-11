@@ -53,6 +53,8 @@ rec {
     inherit mir;
   };
 
+  nerd-fonts-symbols = callPackage ./pkgs/nerd-fonts-symbols {};
+
   silver = callPackage ./pkgs/silver {};
 
   virtualboxWithExtpack = virtualbox.override {
