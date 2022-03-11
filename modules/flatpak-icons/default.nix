@@ -6,7 +6,7 @@ let
     mkdir -p "$out"
     ${concatMapStrings (p: ''
         if [ -d "${p}/share/icons" ]; then
-            cp -rn --no-preserve=mode,ownership "${p}/share/icons/." "$out"
+            cp -rn --no-preserve=mode,ownership "${p}/share/icons/." "$out" || true
         fi
     '') config.environment.systemPackages}
   '';
