@@ -7,13 +7,10 @@ rec {
 
   overlays = import ./overlays;
 
-  cascadia-code-powerline = cascadia-code.overrideAttrs(_: {
-    postFetch = ''
-      mkdir -p $out/share/fonts/
-      unzip -j $downloadedFile CascadiaCodePL.ttf -d $out/share/fonts/truetype
-      unzip -j $downloadedFile CascadiaCodePLItalic.ttf -d $out/share/fonts/truetype
-    '';
-  });
+  cascadia-code-powerline = runCommand "cascadia-code-powerline" {} ''
+    install -m644 --target $out/share/fonts/truetype -D ${cascadia-code}/share/fonts/truetype/CascadiaCodePL.ttf
+    install -m644 --target $out/share/fonts/truetype -D ${cascadia-code}/share/fonts/truetype/CascadiaCodePLItalic.ttf
+  '';
 
   exo2 = callPackage ./pkgs/exo2 {};
 
