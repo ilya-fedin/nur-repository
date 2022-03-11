@@ -9,7 +9,7 @@ rec {
 
   cascadia-code-nerdfont = runCommand "cascadia-code-nerdfont" {} ''
     mkdir -p "$out/share/fonts"
-    font_regexp='.*CascadiaCode\(-.+\)?\.\(ttf\|ttc\|otf\|pcf\|pfa\|pfb\|bdf\)\(\.gz\)?'
+    font_regexp='.*CascadiaCode\.\(ttf\|ttc\|otf\|pcf\|pfa\|pfb\|bdf\)\(\.gz\)?'
     find ${cascadia-code} -regex "$font_regexp" \
       -exec ${nerd-font-patcher}/bin/nerd-font-patcher -c -out "$out/share/fonts" '{}' \;
   '';
