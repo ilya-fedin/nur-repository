@@ -11,7 +11,7 @@ rec {
     mkdir -p "$out/share/fonts"
     font_regexp='.*\.\(ttf\|ttc\|otf\|pcf\|pfa\|pfb\|bdf\)\(\.gz\)?'
     find ${cascadia-code} -regex "$font_regexp" \
-      -exec ${nerd-font-patcher}/bin/nerd-font-patcher -c '{}' "$out/share/fonts" \;
+      -exec ${nerd-font-patcher}/bin/nerd-font-patcher -c -out "$out/share/fonts" '{}' \;
   '';
 
   exo2 = callPackage ./pkgs/exo2 {};
@@ -20,7 +20,7 @@ rec {
     mkdir -p "$out/share/fonts"
     font_regexp='.*\.\(ttf\|ttc\|otf\|pcf\|pfa\|pfb\|bdf\)\(\.gz\)?'
     find ${exo2} -regex "$font_regexp" \
-      -exec ${nerd-font-patcher}/bin/nerd-font-patcher -c '{}' "$out/share/fonts" \;
+      -exec ${nerd-font-patcher}/bin/nerd-font-patcher -c -out "$out/share/fonts" '{}' \;
   '';
 
   gtk-layer-background = callPackage ./pkgs/gtk-layer-background {};
