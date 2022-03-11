@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     owner = "NDISCOVER";
     repo = "Exo-2.0";
     rev = "182060cd38adf3cde0d22add3f8009d30bd48cde";
-    sha256 = "12bhx8gj46sx4ky8w58chpddqk5xqb1xbbciar51a0h7fpps13wj";
+    sha256 = "unstable-2021-11-11";
   };
 
   phases = [ "unpackPhase" "installPhase" ];
