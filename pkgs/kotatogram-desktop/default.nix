@@ -5,6 +5,7 @@
 , pkg-config
 , cmake
 , ninja
+, clang
 , python3
 , wrapGAppsHook
 , wrapQtAppsHook
@@ -131,6 +132,7 @@ stdenv.mkDerivation rec {
     pkg-config
     cmake
     ninja
+    clang
     python3
     wrapQtAppsHook
   ] ++ optionals (stdenv.isLinux && withWebKit) [
