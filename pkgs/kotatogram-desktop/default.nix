@@ -112,7 +112,7 @@ stdenv.mkDerivation rec {
       --replace '"libasound.so.2"' '"${alsa-lib}/lib/libasound.so.2"'
     substituteInPlace Telegram/ThirdParty/libtgvoip/os/linux/AudioPulse.cpp \
       --replace '"libpulse.so.0"' '"${libpulseaudio}/lib/libpulse.so.0"'
-  '' + optionalString withWebKit ''
+  '' + optionalString (stdenv.isLinux && withWebKit) ''
     substituteInPlace Telegram/lib_webview/webview/platform/linux/webview_linux_webkit_gtk.cpp \
       --replace '"libwebkit2gtk-4.0.so.37"' '"${webkitgtk}/lib/libwebkit2gtk-4.0.so.37"'
   '' + optionalString stdenv.isDarwin ''
