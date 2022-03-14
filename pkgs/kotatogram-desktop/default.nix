@@ -134,11 +134,11 @@ stdenv.mkDerivation rec {
     ninja
     python3
     wrapQtAppsHook
-  ] ++ optionals (stdenv.isLinux && withWebKit) [
-    wrapGAppsHook
   ] ++ optionals stdenv.isLinux [
     clang
     extra-cmake-modules
+  ] ++ optionals (stdenv.isLinux && withWebKit) [
+    wrapGAppsHook
   ];
 
   buildInputs = [
@@ -164,6 +164,8 @@ stdenv.mkDerivation rec {
     glibmm
     jemalloc
     wayland
+  ] ++ optionals (stdenv.isLinux && withWebKit) [
+    webkitgtk
   ] ++ optionals stdenv.isDarwin [
     Cocoa
     CoreFoundation
