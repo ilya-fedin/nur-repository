@@ -39,5 +39,6 @@ in {
         options = [ "bind" ];
       };
       environment.sessionVariables.XDG_DATA_DIRS = [ "/usr/share" ];
+      environment.sessionVariables.XCURSOR_PATH = [ "/usr/share/icons" ];
   };
 }
