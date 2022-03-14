@@ -125,7 +125,7 @@ stdenv.mkDerivation rec {
 
   # We want to run wrapProgram manually (with additional parameters)
   dontWrapGApps = stdenv.isLinux;
-  dontWrapQtApps = stdenv.isLinux;
+  dontWrapQtApps = stdenv.isLinux && withWebKit;
 
   nativeBuildInputs = [
     pkg-config
@@ -133,8 +133,9 @@ stdenv.mkDerivation rec {
     ninja
     python3
     wrapQtAppsHook
-  ] ++ optionals stdenv.isLinux [
+  ] ++ optionals (stdenv.isLinux && withWebKit) [
     wrapGAppsHook
+  ] ++ optionals stdenv.isLinux [
     extra-cmake-modules
   ];
 
@@ -211,7 +212,7 @@ stdenv.mkDerivation rec {
     ln -s $out/Applications/Kotatogram.app/Contents/MacOS $out/bin
   '';
 
-  postFixup = optionalString stdenv.isLinux ''
+  postFixup = optionalString (stdenv.isLinux && withWebKit) ''
     # We also use gappsWrapperArgs from wrapGAppsHook.
     wrapProgram $out/bin/kotatogram-desktop \
       "''${gappsWrapperArgs[@]}" \
