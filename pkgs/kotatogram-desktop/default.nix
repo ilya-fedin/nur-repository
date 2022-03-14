@@ -135,6 +135,7 @@ stdenv.mkDerivation rec {
     python3
     wrapQtAppsHook
   ] ++ optionals stdenv.isLinux [
+    # to build bundled libdispatch
     clang
     extra-cmake-modules
   ] ++ optionals (stdenv.isLinux && withWebKit) [
