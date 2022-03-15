@@ -224,7 +224,7 @@ stdenv.mkDerivation rec {
     remove-references-to -t ${stdenv.cc.cc} $out/bin/$binName
     remove-references-to -t ${microsoft_gsl} $out/bin/$binName
     remove-references-to -t ${tg_owt.dev} $out/bin/$binName
-  '' ++ optionalString (stdenv.isLinux && withWebKit) ''
+  '' + optionalString (stdenv.isLinux && withWebKit) ''
     # We also use gappsWrapperArgs from wrapGAppsHook.
     wrapProgram $out/bin/kotatogram-desktop \
       "''${gappsWrapperArgs[@]}" \
