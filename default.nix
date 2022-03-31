@@ -76,4 +76,6 @@ rec {
   };
 
   #wlcs = callPackage ./pkgs/wlcs {};
+
+  wlrootsqt = libsForQt5.callPackage ./pkgs/wlrootsqt {};
 }
