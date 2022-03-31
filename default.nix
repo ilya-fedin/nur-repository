@@ -55,6 +55,10 @@ rec {
 
   nerd-fonts-symbols = callPackage ./pkgs/nerd-fonts-symbols {};
 
+  qtgreet = libsForQt5.callPackage ./pkgs/qtgreet {
+    inherit wlrootsqt;
+  };
+
   silver = callPackage ./pkgs/silver {};
 
   ttf-croscore = noto-fonts.overrideAttrs(oldAttrs: {
