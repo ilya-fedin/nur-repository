@@ -9,7 +9,6 @@ let
     set -euo pipefail
 
     export WAYLAND_DISPLAY=wayland-mate # This will be the Wayland display Mirco creates
-    export XDG_RUNTIME_DIR=/run/user/$(id -u) # Since this is a classic snap, this should be set to the normal value
 
     # Once Mir starts up, it will drop the X11 display number into this file
     XWAYLAND_DISPLAY_FILE=$(mktemp mir-x11-display.XXXXXX --tmpdir)
