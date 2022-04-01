@@ -97,7 +97,7 @@ let
   '';
 
   nixos-gsettings-desktop-schemas = let
-    defaultPackages = with pkgs; [ gsettings-desktop-schemas gnome.gnome-shell ];
+    defaultPackages = with pkgs; [ mate.mate-session-manager mate.mate-panel ];
   in
   pkgs.runCommand "nixos-gsettings-desktop-schemas" { preferLocalBuild = true; }
     ''
@@ -105,7 +105,7 @@ let
 
      ${concatMapStrings
         (pkg: "cp -rf ${pkg}/share/gsettings-schemas/*/glib-2.0/schemas/*.xml $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas\n")
-        [ pkgs.mate.mate-session-manager ]}
+        defaultPackages}
 
      chmod -R a+w $out/share/gsettings-schemas/nixos-gsettings-overrides
      cat - > $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas/nixos-defaults.gschema.override <<- EOF
@@ -114,6 +114,9 @@ let
 
        [org.mate.session.required-components]
        filemanager='mate-gtk-layer-background'
+
+       [org.mate.panel]
+       disabled-applets=['NotificationAreaAppletFactory::NotificationArea', 'WnckletFactory::WorkspaceSwitcherApplet', 'WnckletFactory::ShowDesktopApplet']
      EOF
 
      ${pkgs.glib.dev}/bin/glib-compile-schemas $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas/
