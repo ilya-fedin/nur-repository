@@ -26,6 +26,12 @@ self: super: {
       ];
     });
 
+    mate-settings-daemon = super.mate.mate-settings-daemon.overrideAttrs(_: rec {
+      patches = [
+        ./mate-settings-daemon-only-x11.patch
+      ];
+    });
+
     mate-panel = super.mate.mate-panel.overrideAttrs(oldAttrs: rec {
       buildInputs = oldAttrs.buildInputs ++ (with super; [
         wayland gtk-layer-shell
