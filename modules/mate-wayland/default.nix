@@ -54,10 +54,7 @@ let
 
     COMPONENT_PIDS=""
 
-    GDK_BACKEND=x11 ${pkgs.mate.mate-session-manager}/bin/mate-session &
-    COMPONENT_PIDS="$COMPONENT_PIDS $!"
-
-    ${pkgs.mate.mate-panel}/bin/mate-panel &
+    ${pkgs.mate.mate-session-manager}/bin/mate-session &
     COMPONENT_PIDS="$COMPONENT_PIDS $!"
 
     ${pkgs.nur.repos.ilya-fedin.gtk-layer-background}/bin/gtk-layer-background -i "$(eval "echo $(dconf read /org/mate/desktop/background/picture-filename)")" &

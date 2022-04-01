@@ -20,6 +20,12 @@ self: super: {
       mate-themes
     ];
 
+    mate-session-manager = super.mate.mate-session-manager.overrideAttrs(_: rec {
+      patches = [
+        ./mate-session-only-x11.patch
+      ];
+    });
+
     mate-panel = super.mate.mate-panel.overrideAttrs(oldAttrs: rec {
       buildInputs = oldAttrs.buildInputs ++ (with super; [
         wayland gtk-layer-shell
