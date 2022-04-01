@@ -56,13 +56,9 @@ let
     echo "DISPLAY: ''${DISPLAY:-[nil]}"
     systemctl --user import-environment
 
-    COMPONENT_PIDS=""
-
-    ${pkgs.mate.mate-session-manager}/bin/mate-session &
-    COMPONENT_PIDS="$COMPONENT_PIDS $!"
-
-    # Wait for all components and the server to exit
-    wait $COMPONENT_PIDS $SERVER_PID
+    # Wait for all components to exit and kill the server
+    ${pkgs.mate.mate-session-manager}/bin/mate-session
+    kill $SERVER_PID
   '';
 
   sessionPkg = pkgs.runCommand "mate-wayland-session" {
