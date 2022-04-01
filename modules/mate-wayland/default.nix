@@ -17,6 +17,11 @@ let
     export MIR_SERVER_ENABLE_X11=1
     export MIR_SERVER_XWAYLAND_PATH=${pkgs.xwayland}/bin/Xwayland
 
+    # Set cursor theme and size
+    export XDG_DATA_DIRS="${pkgs.glib.getSchemaDataDirPath pkgs.mate.mate-settings-daemon}:$XDG_DATA_DIRS"
+    export XCURSOR_THEME="$(eval "echo $(gsettings get org.mate.peripherals-mouse cursor-theme)")"
+    export XCURSOR_SIZE="$(gsettings get org.mate.peripherals-mouse cursor-size)"
+
     ${pkgs.nur.repos.ilya-fedin.mirco}/bin/mirco $@ --x11-displayfd 5 5>"$XWAYLAND_DISPLAY_FILE" &
     SERVER_PID=$!
 
