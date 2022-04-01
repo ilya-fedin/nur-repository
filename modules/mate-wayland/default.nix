@@ -4,8 +4,7 @@ with lib;
 let
   cfg = config.programs.mate-wayland;
 
-  startSessionScript = pkgs.writeScriptBin "mate-wayland" ''
-    #!${pkgs.stdenv.shell}
+  startSessionScript = pkgs.writeShellScriptBin "mate-wayland" ''
     set -euo pipefail
 
     export WAYLAND_DISPLAY=wayland-mate # This will be the Wayland display Mirco creates
