@@ -8,6 +8,7 @@ let
     set -euo pipefail
 
     export WAYLAND_DISPLAY=wayland-mate # This will be the Wayland display Mirco creates
+    export XDG_SESSION_TYPE=wayland # Tell to applications we're on Wayland
 
     # Once Mir starts up, it will drop the X11 display number into this file
     XWAYLAND_DISPLAY_FILE=$(mktemp mir-x11-display.XXXXXX --tmpdir)
@@ -54,6 +55,9 @@ let
     echo "XDG_RUNTIME_DIR: ''${XDG_RUNTIME_DIR:-[nil]}"
     echo "DISPLAY: ''${DISPLAY:-[nil]}"
     systemctl --user import-environment
+
+    # Start systemd user services for graphical sessions
+    systemctl --user start graphical-session.target
 
     # Wait for all components to exit and kill the server
     ${pkgs.mate.mate-session-manager}/bin/mate-session
