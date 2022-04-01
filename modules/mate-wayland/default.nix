@@ -56,9 +56,6 @@ let
     ${pkgs.mate.mate-session-manager}/bin/mate-session &
     COMPONENT_PIDS="$COMPONENT_PIDS $!"
 
-    ${pkgs.nur.repos.ilya-fedin.gtk-layer-background}/bin/gtk-layer-background -i "$(eval "echo $(dconf read /org/mate/desktop/background/picture-filename)")" &
-    COMPONENT_PIDS="$COMPONENT_PIDS $!"
-
     # Wait for all components and the server to exit
     wait $COMPONENT_PIDS $SERVER_PID
   '';
@@ -77,6 +74,46 @@ let
     DesktopNames=MATE
     EOF
   '';
+
+  backgroundPkg = pkgs.runCommand "mate-gtk-layer-background" { preferLocalBuild = true; } ''
+    mkdir -p "$out/share/applications/autostart"
+    cat <<EOF > "$out/share/applications/mate-gtk-layer-background.desktop"
+    [Desktop Entry]
+    Name=MATE Wayland Background
+    Exec=${pkgs.writeShellScript "mate-gtk-layer-background" ''exec ${pkgs.nur.repos.ilya-fedin.gtk-layer-background}/bin/gtk-layer-background -i "$(eval "echo $(gsettings get org.mate.background picture-filename)")"''}
+    TryExec=${pkgs.nur.repos.ilya-fedin.gtk-layer-background}/bin/gtk-layer-background
+    Type=Application
+    OnlyShowIn=MATE;
+    X-MATE-Autostart-Phase=Desktop
+    X-MATE-Autostart-Notify=true
+    X-MATE-AutoRestart=true
+    X-MATE-Provides=filemanager
+    NoDisplay=true
+    EOF
+  '';
+
+  nixos-gsettings-desktop-schemas = let
+    defaultPackages = with pkgs; [ gsettings-desktop-schemas gnome.gnome-shell ];
+  in
+  pkgs.runCommand "nixos-gsettings-desktop-schemas" { preferLocalBuild = true; }
+    ''
+     mkdir -p $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas
+
+     ${concatMapStrings
+        (pkg: "cp -rf ${pkg}/share/gsettings-schemas/*/glib-2.0/schemas/*.xml $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas\n")
+        [ pkgs.mate.mate-session-manager ]}
+
+     chmod -R a+w $out/share/gsettings-schemas/nixos-gsettings-overrides
+     cat - > $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas/nixos-defaults.gschema.override <<- EOF
+       [org.mate.session]
+       required-components-list=['panel', 'filemanager', 'dock']
+
+       [org.mate.session.required-components]
+       filemanager='mate-gtk-layer-background'
+     EOF
+
+     ${pkgs.glib.dev}/bin/glib-compile-schemas $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas/
+    '';
 in {
   options = {
     programs.mate-wayland = {
@@ -95,5 +132,7 @@ in {
     nixpkgs.overlays = [ (import ../../overlays/mate-wayland) ];
     services.xserver.desktopManager.mate.enable = true;
     services.xserver.displayManager.sessionPackages = [ sessionPkg ];
+    environment.systemPackages = [ backgroundPkg ];
+    environment.sessionVariables.NIX_GSETTINGS_OVERRIDES_DIR = "${nixos-gsettings-desktop-schemas}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
   };
 }
