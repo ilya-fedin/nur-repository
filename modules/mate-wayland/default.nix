@@ -133,7 +133,7 @@ in {
     nixpkgs.overlays = [ (import ../../overlays/mate-wayland) ];
     services.xserver.desktopManager.mate.enable = true;
     services.xserver.displayManager.sessionPackages = [ sessionPkg ];
-    environment.systemPackages = [ backgroundPkg ];
+    environment.systemPackages = [ startSessionScript backgroundPkg ];
     environment.sessionVariables.NIX_GSETTINGS_OVERRIDES_DIR = "${nixos-gsettings-desktop-schemas}/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas";
   };
 }
