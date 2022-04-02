@@ -40,8 +40,4 @@ self: super: {
         --replace 'indicatordir=@libdir@' 'indicatordir=/run/current-system/sw/lib'
     '';
   });
-
-  onboard = super.onboard.overrideAttrs(oldAttrs: {
-    buildInputs = oldAttrs.buildInputs ++ [ super.libappindicator-gtk3 ];
-  });
 }
