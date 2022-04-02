@@ -7,6 +7,10 @@ rec {
 
   overlays = import ./overlays;
 
+  ayatana-indicator-power = callPackage ./pkgs/ayatana-indicator-power {
+    inherit cmake-extras libayatana-common;
+  };
+
   cascadia-code-powerline = runCommand "cascadia-code-powerline" {} ''
     install -m644 --target $out/share/fonts/truetype -D ${cascadia-code}/share/fonts/truetype/CascadiaCodePL.ttf
     install -m644 --target $out/share/fonts/truetype -D ${cascadia-code}/share/fonts/truetype/CascadiaCodePLItalic.ttf
