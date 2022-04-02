@@ -12,6 +12,8 @@ rec {
     install -m644 --target $out/share/fonts/truetype -D ${cascadia-code}/share/fonts/truetype/CascadiaCodePLItalic.ttf
   '';
 
+  cmake-extras = callPackage ./pkgs/cmake-extras {};
+
   exo2 = callPackage ./pkgs/exo2 {};
 
   gtk-layer-background = callPackage ./pkgs/gtk-layer-background {};
