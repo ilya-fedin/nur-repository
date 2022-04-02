@@ -40,6 +40,10 @@ rec {
     abseil-cpp = abseil-cpp_202111;
   };
 
+  libayatana-common = callPackage ./pkgs/libayatana-common {
+    inherit cmake-extras;
+  };
+
   mesa-drivers-amd = (pkgs.mesa.override {
   	galliumDrivers = [ "radeonsi" ];
   	driDrivers = [];
