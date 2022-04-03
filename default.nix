@@ -7,6 +7,10 @@ rec {
 
   overlays = import ./overlays;
 
+  ayatana-indicator-keyboard = callPackage ./pkgs/ayatana-indicator-keyboard {
+    inherit cmake-extras libayatana-common;
+  };
+
   ayatana-indicator-power = callPackage ./pkgs/ayatana-indicator-power {
     inherit cmake-extras libayatana-common;
   };
