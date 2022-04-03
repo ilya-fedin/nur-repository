@@ -1,6 +1,12 @@
 {
   description = "My personal NUR repository";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
+  inputs.flake-compat = {
+    url = github:edolstra/flake-compat;
+    flake = false;
+  };
+
   outputs = { self, nixpkgs }: let
     lib = import (nixpkgs + "/lib");
     systems = lib.systems.supported.hydra;
