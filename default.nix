@@ -1,8 +1,8 @@
-let
-  nixpkgs = import (import ./flake-compat.nix).inputs.nixpkgs {};
-in { pkgs ? nixpkgs }: let
-  checkedPkgs = if (builtins.tryEval pkgs).success then pkgs else nixpkgs;
-in with checkedPkgs; rec {
+{ ... } @ args: let
+  pkgs = if args ? pkgs && (builtins.tryEval args.pkgs).success
+    then args.pkgs
+    else import (import ./flake-compat.nix).inputs.nixpkgs {};
+in with pkgs; rec {
   modules = import ./modules;
 
   overlays = import ./overlays;
