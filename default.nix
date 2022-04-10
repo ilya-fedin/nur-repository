@@ -56,7 +56,7 @@ in with pkgs; rec {
     inherit cmake-extras;
   };
 
-  mesa-drivers-amd = (pkgs.mesa.override {
+  mesa-drivers-amd = (mesa.override {
   	galliumDrivers = [ "radeonsi" ];
   	driDrivers = [];
   	vulkanDrivers = [ "amd" ];
