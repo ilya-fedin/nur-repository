@@ -105,6 +105,9 @@ stdenv.mkDerivation {
     ApplicationServices
   ];
 
+  # https://github.com/NixOS/nixpkgs/issues/130963
+  NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-lc++abi";
+
   enableParallelBuilding = true;
 
   propagatedBuildInputs = [
