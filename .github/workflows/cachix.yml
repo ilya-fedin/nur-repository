@@ -7,7 +7,10 @@ on:
     - cron:  '0 0 * * *'
 jobs:
   tests:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - run: git config --global user.email "action@github.com"
@@ -23,3 +26,4 @@ jobs:
     - run: NIXPKGS_ALLOW_UNFREE=1 nix-build non-broken.nix
     - run: git add flake.lock
     - run: git diff --staged --quiet || (git commit -m "Update flake" && git push)
+      if: ${{ matrix.os == 'ubuntu-latest' }}
