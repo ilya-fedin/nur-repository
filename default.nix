@@ -56,14 +56,14 @@ in with pkgs; rec {
     inherit cmake-extras;
   };
 
-  mesa-drivers-amd = (mesa.override {
+  mesa-drivers-amd = if stdenv.isLinux then (mesa.override {
   	galliumDrivers = [ "radeonsi" ];
   	driDrivers = [];
   	vulkanDrivers = [ "amd" ];
   	enableGalliumNine = false;
   	enableOSMesa = false;
   	enableOpenCL = false;
-  }).drivers;
+  }).drivers else null;
 
   mir = callPackage ./pkgs/mir {};
 
