@@ -1,54 +1,78 @@
+diff --git a/src/rtc_base/async_resolver.cc b/src/rtc_base/async_resolver.cc
+index ad1598f2..fe9c3832 100644
+--- a/src/rtc_base/async_resolver.cc
++++ b/src/rtc_base/async_resolver.cc
+@@ -57,7 +57,7 @@ void GlobalGcdRunTask(void* context) {
+ 
+ // Post a task into the system-defined global concurrent queue.
+ void PostTaskToGlobalQueue(std::unique_ptr<webrtc::QueuedTask> task) {
+-  dispatch_queue_global_t global_queue =
++  dispatch_queue_t global_queue =
+       dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+   webrtc::QueuedTask* context = task.release();
+   dispatch_async_f(global_queue, context, &GlobalGcdRunTask);
 diff --git a/src/rtc_base/system/gcd_helpers.m b/src/rtc_base/system/gcd_helpers.m
-index fd9a361f..3a63be6d 100644
+index fd9a361f..13a4803a 100644
 --- a/src/rtc_base/system/gcd_helpers.m
 +++ b/src/rtc_base/system/gcd_helpers.m
-@@ -13,9 +13,6 @@
+@@ -13,9 +13,11 @@
  dispatch_queue_t RTCDispatchQueueCreateWithTarget(const char *label,
                                                    dispatch_queue_attr_t attr,
                                                    dispatch_queue_t target) {
--  if (@available(iOS 10, macOS 10.12, tvOS 10, watchOS 3, *)) {
--    return dispatch_queue_create_with_target(label, attr, target);
--  }
++#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 10130
+   if (@available(iOS 10, macOS 10.12, tvOS 10, watchOS 3, *)) {
+     return dispatch_queue_create_with_target(label, attr, target);
+   }
++#endif
    dispatch_queue_t queue = dispatch_queue_create(label, attr);
    dispatch_set_target_queue(queue, target);
    return queue;
 diff --git a/src/sdk/objc/components/video_codec/nalu_rewriter.cc b/src/sdk/objc/components/video_codec/nalu_rewriter.cc
-index 61c1e7d6..b19f3f91 100644
+index 1121c921..5c492eaa 100644
 --- a/src/sdk/objc/components/video_codec/nalu_rewriter.cc
 +++ b/src/sdk/objc/components/video_codec/nalu_rewriter.cc
-@@ -245,10 +245,7 @@ bool H265CMSampleBufferToAnnexBBuffer(
+@@ -242,10 +242,13 @@ bool H265CMSampleBufferToAnnexBBuffer(
    int nalu_header_size = 0;
    size_t param_set_count = 0;
    OSStatus status = noErr;
--  if (__builtin_available(macOS 10.13, *)) {
--    status = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(
--        description, 0, nullptr, nullptr, &param_set_count, &nalu_header_size);
++#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 10130
+   if (__builtin_available(macOS 10.13, *)) {
+     status = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(
+         description, 0, nullptr, nullptr, &param_set_count, &nalu_header_size);
 -  } else {
++  } else
++#endif
 +  {
      RTC_LOG(LS_ERROR) << "Not supported.";
      return false;
    }
-@@ -271,10 +268,7 @@ bool H265CMSampleBufferToAnnexBBuffer(
+@@ -268,10 +271,13 @@ bool H265CMSampleBufferToAnnexBBuffer(
      size_t param_set_size = 0;
      const uint8_t* param_set = nullptr;
      for (size_t i = 0; i < param_set_count; ++i) {
--      if (__builtin_available(macOS 10.13, *)) {
--        status = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(
--            description, i, &param_set, &param_set_size, nullptr, nullptr);
++#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 10130
+       if (__builtin_available(macOS 10.13, *)) {
+         status = CMVideoFormatDescriptionGetHEVCParameterSetAtIndex(
+             description, i, &param_set, &param_set_size, nullptr, nullptr);
 -      } else {
++      } else
++#endif
 +      {
          RTC_LOG(LS_ERROR) << "Not supported.";
          return false;
        }
-@@ -514,11 +508,7 @@ CMVideoFormatDescriptionRef CreateH265VideoFormatDescription(
+@@ -501,11 +507,14 @@ CMVideoFormatDescriptionRef CreateH265VideoFormatDescription(
    // Parse the SPS and PPS into a CMVideoFormatDescription.
    CMVideoFormatDescriptionRef description = nullptr;
    OSStatus status = noErr;
--  if (__builtin_available(macOS 10.13, *)) {
--    status = CMVideoFormatDescriptionCreateFromHEVCParameterSets(
--        kCFAllocatorDefault, 3, param_set_ptrs, param_set_sizes, 4, nullptr,
--        &description);
++#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 10130
+   if (__builtin_available(macOS 10.13, *)) {
+     status = CMVideoFormatDescriptionCreateFromHEVCParameterSets(
+         kCFAllocatorDefault, 3, param_set_ptrs, param_set_sizes, 4, nullptr,
+         &description);
 -  } else {
++  } else
++#endif
 +  {
      RTC_LOG(LS_ERROR) << "Not supported.";
      return nullptr;
