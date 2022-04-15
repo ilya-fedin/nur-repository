@@ -14,7 +14,8 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: flake.lock
-        key: flake-lock
+        key: flake-lock-${{ hashFiles('flake.lock') }}
+        restore-keys: flake-lock-
     - run: nix flake update
 
   tests:
@@ -29,7 +30,8 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: flake.lock
-        key: flake-lock
+        key: flake-lock-${{ hashFiles('flake.lock') }}
+        restore-keys: flake-lock-
     - uses: cachix/cachix-action@v10
       with:
         name: ilya-fedin
@@ -44,7 +46,8 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: flake.lock
-        key: flake-lock
+        key: flake-lock-${{ hashFiles('flake.lock') }}
+        restore-keys: flake-lock-
     - run: git config --global user.email "action@github.com"
     - run: git config --global user.name "GitHub Action"
     - run: git add flake.lock
