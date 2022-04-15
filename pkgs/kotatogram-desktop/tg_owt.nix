@@ -61,7 +61,7 @@ stdenv.mkDerivation {
     ./tg_owt-10.12-sdk.patch
   ];
 
-  postPatch = optionalString stdenv.isLinux ''
+  postPatch = lib.optionalString stdenv.isLinux ''
     substituteInPlace src/modules/desktop_capture/linux/egl_dmabuf.cc \
       --replace '"libEGL.so.1"' '"${libGL}/lib/libEGL.so.1"'
     substituteInPlace src/modules/desktop_capture/linux/egl_dmabuf.cc \
