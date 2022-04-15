@@ -46,7 +46,7 @@
 
 stdenv.mkDerivation {
   pname = "tg_owt";
-  version = "unstable-2022-02-26";
+  version = "unstable-2022-04-13";
 
   src = fetchFromGitHub {
     owner = "desktop-app";
