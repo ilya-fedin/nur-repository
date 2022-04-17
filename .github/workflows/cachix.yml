@@ -20,7 +20,7 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: flake.lock
-        key: flake-lock-${{ outputs.cache-key }}
+        key: flake-lock-${{ steps.cache-key.outputs.cache-key }}
         restore-keys: flake-lock-
     - run: mv flake.lock{.bak,}
 
