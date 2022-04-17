@@ -8,15 +8,19 @@ on:
 jobs:
   update-flake:
     runs-on: ubuntu-latest
+    outputs:
+      cache-key: steps.cache-key.outputs.cache-key
     steps:
     - uses: actions/checkout@v3
     - uses: cachix/install-nix-action@v16
     - run: nix flake update
+    - run: echo "::set-output name=cache-key::${{ hashFiles('flake.lock') }}"
+      id: cache-key
     - run: mv flake.lock{,.bak}
     - uses: actions/cache@v3
       with:
         path: flake.lock
-        key: flake-lock-${{ hashFiles('flake.lock.bak') }}
+        key: flake-lock-${{ outputs.cache-key }}
         restore-keys: flake-lock-
     - run: mv flake.lock{.bak,}
 
@@ -32,7 +36,7 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: flake.lock
-        key: flake-lock-${{ hashFiles('flake.lock') }}
+        key: flake-lock-${{ needs.update-flake.outputs.cache-key }}
         restore-keys: flake-lock-
     - uses: cachix/cachix-action@v10
       with:
@@ -48,7 +52,7 @@ jobs:
     - uses: actions/cache@v3
       with:
         path: flake.lock
-        key: flake-lock-${{ hashFiles('flake.lock') }}
+        key: flake-lock-${{ needs.update-flake.outputs.cache-key }}
         restore-keys: flake-lock-
     - run: git config --global user.email "action@github.com"
     - run: git config --global user.name "GitHub Action"
