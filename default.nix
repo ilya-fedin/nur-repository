@@ -58,7 +58,6 @@ in with pkgs; rec {
 
   mesa-drivers-amd = if stdenv.isLinux then (mesa.override {
   	galliumDrivers = [ "radeonsi" ];
-  	driDrivers = [];
   	vulkanDrivers = [ "amd" ];
   	enableGalliumNine = false;
   	enableOSMesa = false;
