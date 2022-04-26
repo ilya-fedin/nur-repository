@@ -78,7 +78,7 @@ let
     EOF
   '';
 
-  backgroundPkg = pkgs.runCommand "mate-gtk-layer-background" {} ''
+  backgroundPkg = pkgs.runCommand "mate-gtk-layer-background-autostart" {} ''
     mkdir -p "$out/share/applications/autostart"
     cat <<EOF > "$out/share/applications/mate-gtk-layer-background.desktop"
     [Desktop Entry]
