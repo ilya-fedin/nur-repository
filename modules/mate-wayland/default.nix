@@ -125,7 +125,6 @@ in {
       enable = mkOption {
         type = types.bool;
         default = false;
-        internal = true;
         description = ''
           Enable MATE Wayland session.
         '';

@@ -21,7 +21,6 @@ in {
       enable = mkOption {
         type = types.bool;
         default = false;
-        internal = true;
         description = ''
           Replace D-Bus message bus daemon with Linux D-Bus Message Broker, which is
           an implementation of a message bus as defined by the D-Bus specification.
