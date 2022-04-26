@@ -65,7 +65,6 @@ let
   '';
 
   sessionPkg = pkgs.runCommand "mate-wayland-session" {
-    preferLocalBuild = true;
     passthru.providedSessions = [ "mate-wayland" ];
   } ''
     mkdir -p "$out/share/wayland-sessions"
@@ -79,7 +78,7 @@ let
     EOF
   '';
 
-  backgroundPkg = pkgs.runCommand "mate-gtk-layer-background" { preferLocalBuild = true; } ''
+  backgroundPkg = pkgs.runCommand "mate-gtk-layer-background" {} ''
     mkdir -p "$out/share/applications/autostart"
     cat <<EOF > "$out/share/applications/mate-gtk-layer-background.desktop"
     [Desktop Entry]
@@ -99,7 +98,7 @@ let
   nixos-gsettings-desktop-schemas = let
     defaultPackages = with pkgs; [ mate.mate-session-manager mate.mate-panel ];
   in
-  pkgs.runCommand "nixos-gsettings-desktop-schemas" { preferLocalBuild = true; }
+  pkgs.runCommand "nixos-gsettings-desktop-schemas" {}
     ''
      mkdir -p $out/share/gsettings-schemas/nixos-gsettings-overrides/glib-2.0/schemas
 
