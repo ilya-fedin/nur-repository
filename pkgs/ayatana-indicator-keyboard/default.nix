@@ -4,13 +4,13 @@
 
 stdenv.mkDerivation rec {
   pname = "ayatana-indicator-keyboard";
-  version = "22.2.0";
+  version = "22.2.2";
 
   src = fetchFromGitHub {
     owner = "AyatanaIndicators";
     repo = pname;
     rev = version;
-    sha256 = "sha256-fuSrqttzSBThuNM+NVBDrv+3z1NMvKLTgIZ1XprclX8=";
+    sha256 = "sha256-BJDPBjkZkIFuheJiElUxP1XXOYDFNZ3DE0YI4KyVaIw=";
   };
 
   postPatch = ''
