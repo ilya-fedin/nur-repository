@@ -1,5 +1,6 @@
 { lib, stdenv, fetchFromGitHub, pkg-config, cmake, cmake-extras, intltool, systemd
-, glib, libnotify, gtk3, libayatana-common, libX11, libxklavier
+, glib, libnotify, gtk3, libayatana-common, libX11, libxklavier, libxkbcommon
+, accountsservice
 }:
 
 stdenv.mkDerivation rec {
@@ -23,7 +24,10 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [ pkg-config cmake cmake-extras intltool ];
 
-  buildInputs = [ glib libnotify gtk3 libayatana-common systemd libX11 libxklavier ];
+  buildInputs = [
+    glib libnotify gtk3 libayatana-common accountsservice
+    libX11 libxklavier libxkbcommon systemd
+    ];
 
   meta = with lib; {
     description = "Ayatana Indicator Keyboard Applet";
