@@ -3,18 +3,6 @@
 with lib;
 let
   cfg = config.services.dbus-broker;
-
-  brokerPkg = pkgs.dbus-broker.overrideAttrs(oldAttrs: {
-    patches = (
-      if attrsets.hasAttrByPath [ "patches" ] oldAttrs
-      then oldAttrs.patches
-      else []
-    ) ++ [
-      ./use-right-paths.patch
-    ];
-
-    doCheck = false;
-  });
 in {
   options = {
     services.dbus-broker = {
@@ -34,8 +22,8 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ brokerPkg ];
-    systemd.packages = [ brokerPkg ];
+    environment.systemPackages = [ pkgs.dbus-broker ];
+    systemd.packages = [ pkgs.dbus-broker ];
 
     services.dbus.enable = true;
 
