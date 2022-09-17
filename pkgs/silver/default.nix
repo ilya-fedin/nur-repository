@@ -1,4 +1,4 @@
-{ lib, fetchFromGitHub, rustPlatform, pkgconfig, openssl }:
+{ lib, fetchFromGitHub, rustPlatform, pkgconfig, openssl_1_1 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "silver";
@@ -13,7 +13,7 @@ rustPlatform.buildRustPackage rec {
 
   nativeBuildInputs = [ pkgconfig ];
 
-  buildInputs = [ openssl ];
+  buildInputs = [ openssl_1_1 ];
 
   cargoSha256 = "1whzqf4nw47dm1sppqsv429j4nfg5g891g03l266ba57k3lfl1ib";
 
