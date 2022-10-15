@@ -1,5 +1,5 @@
-{ ... } @ args: let
-  pkgs = if args ? pkgs && (builtins.tryEval args.pkgs).success
+{ pkgs ? null }: ({ ... } @ args: let
+  pkgs = if args ? pkgs && (builtins.tryEval args.pkgs).success && args.pkgs != null
     then args.pkgs
     else import (import ./flake-compat.nix).inputs.nixpkgs {};
 in with pkgs; rec {
@@ -91,4 +91,4 @@ in with pkgs; rec {
   #wlcs = callPackage ./pkgs/wlcs {};
 
   wlrootsqt = libsForQt5.callPackage ./pkgs/wlrootsqt {};
-}
+}) { inherit pkgs; }
