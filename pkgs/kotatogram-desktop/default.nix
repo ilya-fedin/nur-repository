@@ -220,9 +220,9 @@ stdenv.mkDerivation rec {
   env.NIX_CFLAGS_COMPILE = optionalString stdenv.isLinux "-DQ_WAYLAND_CLIENT_EXPORT=";
 
   installPhase = optionalString stdenv.isDarwin ''
-    mkdir -p $out/{Applications,bin}
+    mkdir -p $out/Applications
     cp -r ${mainProgram}.app $out/Applications
-    ln -s $out/{Applications/${mainProgram}.app/Contents/MacOS,bin}/${mainProgram}
+    ln -s $out/{Applications/${mainProgram}.app/Contents/MacOS,bin}
   '';
 
   preFixup = ''
