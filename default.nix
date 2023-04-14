@@ -77,7 +77,9 @@ in with pkgs; rec {
 
   silver = callPackage ./pkgs/silver {};
 
-  ttf-croscore = noto-fonts.overrideAttrs(oldAttrs: {
+  ttf-croscore = (import (import ./flake-compat.nix).inputs.nixpkgs-croscore {
+    system = stdenv.system;
+  }).noto-fonts.overrideAttrs(oldAttrs: {
     pname = "ttf-croscore";
 
     installPhase = ''
