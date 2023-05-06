@@ -4,7 +4,7 @@
   inputs.nixpkgs-croscore.url = "github:NixOS/nixpkgs/a6ab4bfac4447bd550a5d20da282881136c31c4a";
 
   inputs.flake-compat = {
-    url = github:edolstra/flake-compat;
+    url = "github:edolstra/flake-compat";
     flake = false;
   };
 
@@ -12,10 +12,16 @@
     lib = import (nixpkgs + "/lib");
     forAllSystems = f: lib.genAttrs lib.systems.flakeExposed (system: f system);
   in {
-    packages = forAllSystems (system: import ./. {
-      pkgs = import nixpkgs { inherit system; };
-    });
+    packages = forAllSystems (system:
+      lib.filterAttrs
+        (name: _: name != "modules" && name != "overlays")
+        (import ./. {
+          pkgs = import nixpkgs { inherit system; };
+        })
+    );
 
     nixosModules = import ./modules;
+
+    overlays = import ./overlays;
   };
 }
