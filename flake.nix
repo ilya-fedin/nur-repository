@@ -11,19 +11,14 @@
   outputs = { nixpkgs, ... }: let
     lib = import (nixpkgs + "/lib");
     forAllSystems = f: lib.genAttrs lib.systems.flakeExposed (system: f system);
-  in rec {
-    nixpkgsConfig = {
-      allowUnfree = true;
-      allowInsecurePredicate = pkg: true;
-    };
-
+  in {
     packages = forAllSystems (system:
       lib.filterAttrs
         (name: _: name != "modules" && name != "overlays")
         (import ./. {
           pkgs = import nixpkgs {
             inherit system;
-            config = nixpkgsConfig;
+            config = import ./nixpkgs-config.nix;
           };
         })
     );

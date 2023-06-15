@@ -1,8 +1,8 @@
 { pkgs ? null }: (args: let
   pkgs = if (builtins.tryEval args.pkgs).success && args.pkgs != null
     then args.pkgs
-    else with import ./flake-compat.nix; import inputs.nixpkgs {
-      config = outputs.nixpkgsConfig;
+    else import (import ./flake-compat.nix).inputs.nixpkgs {
+      config = import ./nixpkgs-config.nix;
     };
 in with pkgs; rec {
   modules = import ./modules;
