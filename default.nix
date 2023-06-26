@@ -46,8 +46,6 @@ in with pkgs; rec {
     jemalloc = (jemalloc.override { stdenv = clangStdenv; }).overrideAttrs(_: {
       doCheck = false;
     });
-
-    abseil-cpp = abseil-cpp_202111;
   };
 
   kotatogram-desktop-with-webkit = callPackage ./pkgs/kotatogram-desktop/with-webkit.nix {
