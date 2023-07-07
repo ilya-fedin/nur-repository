@@ -1,4 +1,5 @@
 {
+  cache = import ./cache;
   default-emoji-font = import ./default-emoji-font;
   metric-compatible-fonts = import ./metric-compatible-fonts;
   noto-cjk = import ./noto-cjk;
