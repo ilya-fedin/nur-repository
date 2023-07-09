@@ -2,8 +2,6 @@
 
 with lib;
 let
-  customPkgs = import ../.. { inherit pkgs; };
-
   cfg = config.fonts.fontconfig;
 
   preferConf = pkgs.writeText "fc-30-metric-compatible-fonts.conf" ''
@@ -104,7 +102,8 @@ in {
   };
 
   config = mkIf cfg.crOSMaps {
-    fonts.fonts = with pkgs; with customPkgs; [
+    nixpkgs.overlays = [ (import ../../overlays).default ];
+    fonts.fonts = with pkgs; [
       ttf-croscore
       carlito
       caladea

@@ -2,8 +2,6 @@
 
 with lib;
 let
-  customPkgs = import ../.. { inherit pkgs; };
-
   cfg = config.programs.mate-wayland;
 
   startSessionScript = pkgs.writeShellScriptBin "mate-wayland" ''
@@ -24,7 +22,7 @@ let
     export XCURSOR_THEME="$(eval "echo $(gsettings get org.mate.peripherals-mouse cursor-theme)")"
     export XCURSOR_SIZE="$(gsettings get org.mate.peripherals-mouse cursor-size)"
 
-    ${customPkgs.mirco}/bin/mirco $@ --x11-displayfd 5 5>"$XWAYLAND_DISPLAY_FILE" &
+    ${mirco}/bin/mirco $@ --x11-displayfd 5 5>"$XWAYLAND_DISPLAY_FILE" &
     SERVER_PID=$!
 
     echo "Waiting for DISPLAY to appear in $XWAYLAND_DISPLAY_FILE"
@@ -85,8 +83,8 @@ let
     cat <<EOF > "$out/share/applications/mate-gtk-layer-background.desktop"
     [Desktop Entry]
     Name=MATE Wayland Background
-    Exec=${pkgs.writeShellScript "mate-gtk-layer-background" ''exec ${customPkgs.gtk-layer-background}/bin/gtk-layer-background -i "$(eval "echo $(gsettings get org.mate.background picture-filename)")"''}
-    TryExec=${customPkgs.gtk-layer-background}/bin/gtk-layer-background
+    Exec=${pkgs.writeShellScript "mate-gtk-layer-background" ''exec ${gtk-layer-background}/bin/gtk-layer-background -i "$(eval "echo $(gsettings get org.mate.background picture-filename)")"''}
+    TryExec=${gtk-layer-background}/bin/gtk-layer-background
     Type=Application
     OnlyShowIn=MATE;
     X-MATE-Autostart-Phase=Desktop
@@ -135,7 +133,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    nixpkgs.overlays = [ (import ../../overlays/mate-wayland) ];
+    nixpkgs.overlays = let overlays = import ../../overlays; in [ overlays.mate-wayland overlays.default ];
     services.xserver.desktopManager.mate.enable = true;
     services.xserver.displayManager.sessionPackages = [ sessionPkg ];
     environment.systemPackages = [ startSessionScript backgroundPkg ];

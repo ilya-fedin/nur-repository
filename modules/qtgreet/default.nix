@@ -2,7 +2,6 @@
 
 with lib;
 let
-  customPkgs = import ../.. { inherit pkgs; };
   cfg = config.programs.qtgreet;
   greetdCfg = config.services.greetd;
   settingsFormat = pkgs.formats.ini {};
@@ -44,9 +43,9 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = [ customPkgs.qtgreet ];
+    nixpkgs.overlays = [ (import ../../overlays).default ];
     services.xserver.displayManager.startx.enable = true;
-    services.greetd.settings.default_session.command = "${pkgs.cage}/bin/cage -ds -- ${customPkgs.qtgreet}/bin/qtgreet";
+    services.greetd.settings.default_session.command = "${pkgs.cage}/bin/cage -ds -- ${qtgreet}/bin/qtgreet";
     environment.etc."X11/xinit/Xsession".source = config.services.xserver.displayManager.sessionData.wrapper;
     environment.etc."greetd/config.toml".source = greetdSettingsFormat.generate "greetd.toml" greetdCfg.settings;
     environment.etc."qtgreet/config.ini".source = settingsFormat.generate "qtgreet.ini" cfg.settings;
