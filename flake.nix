@@ -8,7 +8,7 @@
     flake = false;
   };
 
-  outputs = { nixpkgs, ... }: let
+  outputs = { nixpkgs, ... }@inputs: let
     lib = import (nixpkgs + "/lib");
     forAllSystems = f: lib.genAttrs lib.systems.flakeExposed (system: f system);
   in {
@@ -16,6 +16,7 @@
       lib.filterAttrs
         (name: _: name != "modules" && name != "overlays")
         (import ./. {
+          inherit inputs;
           pkgs = import nixpkgs {
             inherit system;
             config = import ./nixpkgs-config.nix;

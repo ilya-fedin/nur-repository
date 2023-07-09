@@ -1,10 +1,4 @@
-{ pkgs ? null }: (args: let
-  pkgs = if (builtins.tryEval args.pkgs).success && args.pkgs != null
-    then args.pkgs
-    else import (import ./flake-compat.nix).inputs.nixpkgs {
-      config = import ./nixpkgs-config.nix;
-    };
-in with pkgs; rec {
+{ pkgs, inputs ? null }: with pkgs; rec {
   modules = import ./modules;
 
   overlays = import ./overlays;
@@ -77,21 +71,6 @@ in with pkgs; rec {
 
   silver = callPackage ./pkgs/silver {};
 
-  ttf-croscore = (import (import ./flake-compat.nix).inputs.nixpkgs-croscore {
-    system = stdenv.system;
-  }).noto-fonts.overrideAttrs(oldAttrs: {
-    pname = "ttf-croscore";
-
-    installPhase = ''
-      install -m444 -Dt $out/share/fonts/truetype/croscore hinted/*/{Arimo,Cousine,Tinos}/*.ttf
-    '';
-
-    meta = oldAttrs.meta // {
-      description = "Chrome OS core fonts";
-      longDescription = "This package includes the Arimo, Cousine, and Tinos fonts.";
-    };
-  });
-
   virtualboxWithExtpack = virtualbox.override {
     enableHardening = true;
     extensionPack = virtualboxExtpack;
@@ -100,4 +79,18 @@ in with pkgs; rec {
   #wlcs = callPackage ./pkgs/wlcs {};
 
   wlrootsqt = libsForQt5.callPackage ./pkgs/wlrootsqt {};
-}) { inherit pkgs; }
+} # pkgs below are available through flake or default overlay of nur/flake
+  // pkgs.lib.optionalAttrs (inputs != null) {
+  ttf-croscore = inputs.nixpkgs-croscore.legacyPackages.${system}.noto-fonts.overrideAttrs (oa: {
+    pname = "ttf-croscore";
+
+    installPhase = ''
+      install -m444 -Dt $out/share/fonts/truetype/croscore hinted/*/{Arimo,Cousine,Tinos}/*.ttf
+    '';
+
+    meta = oa.meta // {
+      description = "Chrome OS core fonts";
+      longDescription = "This package includes the Arimo, Cousine, and Tinos fonts.";
+    };
+  });
+}
