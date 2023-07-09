@@ -8,11 +8,16 @@
     flake = false;
   };
 
-  outputs = { nixpkgs, ... }@inputs: let
-    lib = import (nixpkgs + "/lib");
+  outputs = { self, nixpkgs, ... }@inputs: let
+    lib = nixpkgs.lib;
     forAllSystems = f: lib.genAttrs lib.systems.flakeExposed (system: f system);
   in {
-    packages = forAllSystems (system:
+      packages = forAllSystems (system: {
+        ci = nixpkgs.legacyPackages.${system}.linkFarmFromDrvs "ci"
+          (lib.mapAttrsToList
+            (_: p: p)
+            (lib.filterAttrs (name: _: name != "ci") self.packages.${system}));
+      } //
       lib.filterAttrs
         (name: _: name != "modules" && name != "overlays")
         (import ./. {

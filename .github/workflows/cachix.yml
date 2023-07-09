@@ -40,7 +40,7 @@ jobs:
         name: ilya-fedin
         authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
         skipPush: ${{ github.ref_name != github.event.repository.default_branch }}
-    - run: nix-build ci.nix
+    - run: nix build .#ci --experimental-features "nix-command flakes"
 
   push-flake-update:
     if: ${{ github.ref_name == github.event.repository.default_branch }}
