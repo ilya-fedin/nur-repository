@@ -104,7 +104,7 @@ in {
   };
 
   config = mkIf cfg.crOSMaps {
-    fonts.fonts = with pkgs; with customPkgs; [
+    fonts.packages = with pkgs; with customPkgs; [
       ttf-croscore
       carlito
       caladea

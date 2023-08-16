@@ -22,7 +22,7 @@ let
   fontDir = pkgs.runCommand "fonts" { preferLocalBuild = true; } ''
     mkdir -p "$out"
     font_regexp='.*\.\(ttf\|ttc\|otf\|pcf\|pfa\|pfb\|bdf\)\(\.gz\)?'
-    find ${toString config.fonts.fonts} -regex "$font_regexp" \
+    find ${toString config.fonts.packages} -regex "$font_regexp" \
       -exec cp -rn --no-preserve=mode,ownership '{}' "$out" \;
   '';
 
