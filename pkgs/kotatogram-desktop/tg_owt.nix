@@ -6,12 +6,12 @@
 , ninja
 , yasm
 , libjpeg
-, openssl_1_1
+, openssl
 , libopus
-, ffmpeg_4
+, ffmpeg
 , protobuf
 , openh264
-, usrsctp
+, crc32c
 , libvpx
 , libX11
 , libXtst
@@ -46,19 +46,15 @@
 
 stdenv.mkDerivation {
   pname = "tg_owt";
-  version = "unstable-2022-05-04";
+  version = "unstable-2023-09-21";
 
   src = fetchFromGitHub {
     owner = "desktop-app";
     repo = "tg_owt";
-    rev = "442d5bb593c0ae314960308d78f2016ad1f80c3e";
-    sha256 = "sha256-/TuDp0lFkP5yO9cz3ak4BR3wNUPTWxezJ+CtbZcjMS0=";
+    rev = "592b14d13bf9103226e90a83571e24c49f6bfdcd";
+    sha256 = "sha256-MtqsJIFLZYpEjyTpI52s0cTGOAvuZI1VLNENk/5tF9I=";
     fetchSubmodules = true;
   };
-
-  patches = [
-    ./tg_owt.patch
-  ];
 
   postPatch = lib.optionalString stdenv.isLinux ''
     substituteInPlace src/modules/desktop_capture/linux/wayland/egl_dmabuf.cc \
@@ -74,12 +70,12 @@ stdenv.mkDerivation {
 
   propagatedBuildInputs = [
     libjpeg
-    openssl_1_1
+    openssl
     libopus
-    ffmpeg_4
+    ffmpeg
     protobuf
     openh264
-    usrsctp
+    crc32c
     libvpx
     abseil-cpp
   ] ++ lib.optionals stdenv.isLinux [

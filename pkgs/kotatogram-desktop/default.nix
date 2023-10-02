@@ -17,7 +17,7 @@
 , qt5compat
 , lz4
 , xxHash
-, ffmpeg_4
+, ffmpeg
 , openalSoft
 , minizip
 , libopus
@@ -26,11 +26,14 @@
 , range-v3
 , tl-expected
 , hunspell
-, glibmm
+, gobject-introspection
+, glibmm_2_68
 , jemalloc
 , rnnoise
 , abseil-cpp
 , microsoft_gsl
+, boost
+, fmt
 , wayland
 , libicns
 , Cocoa
@@ -64,6 +67,7 @@
 , IOSurface
 , Metal
 , MetalKit
+, NaturalLanguage
 }:
 
 with lib;
@@ -83,32 +87,31 @@ let
       CoreGraphics CoreVideo OpenGL Metal MetalKit CoreFoundation ApplicationServices;
   };
 
-  tgcallsPatch = fetchpatch {
-    url = "https://github.com/TelegramMessenger/tgcalls/commit/82c4921045c440b727c38e464f3a0539708423ff.patch";
-    sha256 = "sha256-FIPelc6QQsQi9JYHaxjt87lE0foCYd7BNPrirUDp6VM=";
+  cppgirPatch = fetchpatch {
+    url = "https://gitlab.com/mnauw/cppgir/-/commit/960fe054ffaab7cf55722fea6094c56a8ee8f18e.patch";
+    sha256 = "sha256-puflGBLr7uilAGPNMmktJ4BXyDMYwwdO+XQtVur5Zp8=";
   };
 
   mainProgram = if stdenv.isLinux then "kotatogram-desktop" else "Kotatogram";
 in
 stdenv.mkDerivation rec {
   pname = "kotatogram-desktop";
-  version = "unstable-2023-06-16";
+  version = "unstable-2023-10-02";
 
   src = fetchFromGitHub {
     owner = "ilya-fedin";
     repo = "kotatogram-desktop";
-    rev = "bd1a4802ea227d0d3aa156a6d445ed51bc93afed";
-    sha256 = "sha256-AyBKOf+74tGVnBJbQHa3TRGGLe1fQIlGGdDLJrI3HTE=";
+    rev = "2c3c852331e36cf77daf7f64610d9633aed7298c";
+    sha256 = "sha256-dEqWZGdUYmP1+tXjXa5IGqVnnnzCfGt4pYDmVuDq2OM=";
     fetchSubmodules = true;
   };
 
   patches = [
-    ./shortcuts-binary-path.patch
+    ./macos.patch
   ];
 
-  postPatch = ''
-    patch -p1 -d Telegram/ThirdParty/tgcalls < ${tgcallsPatch}
-  '' + optionalString stdenv.isLinux ''
+  postPatch = optionalString stdenv.isLinux ''
+    patch -p1 -d cmake/external/glib/cppgir < ${cppgirPatch}
     substituteInPlace Telegram/ThirdParty/libtgvoip/os/linux/AudioInputALSA.cpp \
       --replace '"libasound.so.2"' '"${alsa-lib}/lib/libasound.so.2"'
     substituteInPlace Telegram/ThirdParty/libtgvoip/os/linux/AudioOutputALSA.cpp \
@@ -116,7 +119,6 @@ stdenv.mkDerivation rec {
     substituteInPlace Telegram/ThirdParty/libtgvoip/os/linux/AudioPulse.cpp \
       --replace '"libpulse.so.0"' '"${libpulseaudio}/lib/libpulse.so.0"'
   '' + optionalString stdenv.isDarwin ''
-    sed -i "13i#import <CoreAudio/CoreAudio.h>" Telegram/lib_webrtc/webrtc/mac/webrtc_media_devices_mac.mm
     substituteInPlace Telegram/CMakeLists.txt \
       --replace 'COMMAND iconutil' 'COMMAND png2icns' \
       --replace '--convert icns' "" \
@@ -143,10 +145,9 @@ stdenv.mkDerivation rec {
     qtbase
     qtimageformats
     qtsvg
-    qt5compat
     lz4
     xxHash
-    ffmpeg_4
+    ffmpeg
     openalSoft
     minizip
     libopus
@@ -160,8 +161,11 @@ stdenv.mkDerivation rec {
     alsa-lib
     libpulseaudio
     hunspell
-    glibmm
+    gobject-introspection
+    glibmm_2_68
     jemalloc
+    boost
+    fmt
     wayland
   ] ++ optionals stdenv.isDarwin [
     Cocoa
@@ -194,6 +198,7 @@ stdenv.mkDerivation rec {
     MediaPlayer
     IOSurface
     Metal
+    NaturalLanguage
     libicns
   ];
 
