@@ -96,13 +96,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "kotatogram-desktop";
-  version = "unstable-2023-10-02";
+  version = "unstable-2023-10-03";
 
   src = fetchFromGitHub {
     owner = "ilya-fedin";
     repo = "kotatogram-desktop";
-    rev = "2c3c852331e36cf77daf7f64610d9633aed7298c";
-    sha256 = "sha256-dEqWZGdUYmP1+tXjXa5IGqVnnnzCfGt4pYDmVuDq2OM=";
+    rev = "d66ac95e45696499dd21fe1b7d0a19d031a64649";
+    sha256 = "sha256-bf/m77PytoGLf8iCc08eVUsz7CMzTEit4UKhgzWoMr0=";
     fetchSubmodules = true;
   };
 
@@ -118,12 +118,6 @@ stdenv.mkDerivation rec {
       --replace '"libasound.so.2"' '"${alsa-lib}/lib/libasound.so.2"'
     substituteInPlace Telegram/ThirdParty/libtgvoip/os/linux/AudioPulse.cpp \
       --replace '"libpulse.so.0"' '"${libpulseaudio}/lib/libpulse.so.0"'
-  '' + optionalString stdenv.isDarwin ''
-    substituteInPlace Telegram/CMakeLists.txt \
-      --replace 'COMMAND iconutil' 'COMMAND png2icns' \
-      --replace '--convert icns' "" \
-      --replace '--output AppIcon.icns' 'AppIcon.icns' \
-      --replace "\''${appicon_path}" "\''${appicon_path}/icon_16x16.png \''${appicon_path}/icon_32x32.png \''${appicon_path}/icon_128x128.png \''${appicon_path}/icon_256x256.png \''${appicon_path}/icon_512x512.png"
   '';
 
   # Wrapping the inside of the app bundles, avoiding double-wrapping
