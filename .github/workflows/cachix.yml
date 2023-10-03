@@ -15,7 +15,7 @@ jobs:
     - uses: cachix/install-nix-action@v23
     - run: nix flake update
       if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
-    - run: echo "::set-output name=cache-key::${{ hashFiles('flake.lock') }}"
+    - run: echo "cache-key=${{ hashFiles('flake.lock') }}" >> $GITHUB_OUTPUT
       id: cache-key
     - uses: actions/cache@v3
       with:
