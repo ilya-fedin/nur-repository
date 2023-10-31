@@ -29,8 +29,12 @@
   };
 
   nixConfig = {
-    substituters = [ "https://ilya-fedin.cachix.org" ];
+    substituters = [
+      "https://cache.nixos.org/"
+      "https://ilya-fedin.cachix.org"
+    ];
     trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "ilya-fedin.cachix.org-1:QveU24a5ePPMh82mAFSxLk1P+w97pRxqe9rh+MJqlag="
     ];
   };
