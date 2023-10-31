@@ -77,7 +77,6 @@ let
     abseil-cpp = abseil-cpp.override {
       # abseil-cpp should use the same compiler
       inherit stdenv;
-      cxxStandard = "20";
     };
 
     # tg_owt should use the same compiler
