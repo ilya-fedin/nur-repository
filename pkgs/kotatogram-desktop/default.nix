@@ -30,7 +30,7 @@
 , jemalloc
 , rnnoise
 , abseil-cpp
-, microsoft_gsl
+, microsoft-gsl
 , boost
 , fmt
 , wayland
@@ -152,7 +152,7 @@ stdenv.mkDerivation rec {
     tl-expected
     rnnoise
     tg_owt
-    microsoft_gsl
+    microsoft-gsl
   ] ++ lib.optionals stdenv.isLinux [
     qtwayland
     alsa-lib
@@ -213,7 +213,7 @@ stdenv.mkDerivation rec {
 
   preFixup = ''
     remove-references-to -t ${stdenv.cc.cc} $out/bin/${mainProgram}
-    remove-references-to -t ${microsoft_gsl} $out/bin/${mainProgram}
+    remove-references-to -t ${microsoft-gsl} $out/bin/${mainProgram}
     remove-references-to -t ${tg_owt.dev} $out/bin/${mainProgram}
   '';
 
