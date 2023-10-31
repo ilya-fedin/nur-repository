@@ -73,7 +73,8 @@ stdenv.mkDerivation {
     openssl
     libopus
     ffmpeg
-    protobuf
+    # abseil-cpp and its users should use the same compiler recursively
+    (protobuf.override { inherit stdenv abseil-cpp; })
     openh264
     crc32c
     libvpx
