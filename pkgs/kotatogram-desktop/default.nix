@@ -69,8 +69,6 @@
 , NaturalLanguage
 }:
 
-with lib;
-
 let
   tg_owt = callPackage ./tg_owt.nix {
     abseil-cpp = abseil-cpp.override {
@@ -115,7 +113,7 @@ stdenv.mkDerivation rec {
     })
   ];
 
-  postPatch = optionalString stdenv.isLinux ''
+  postPatch = lib.optionalString stdenv.isLinux ''
     patch -p1 -d cmake/external/glib/cppgir < ${cppgirPatch}
     substituteInPlace Telegram/ThirdParty/libtgvoip/os/linux/AudioInputALSA.cpp \
       --replace '"libasound.so.2"' '"${alsa-lib}/lib/libasound.so.2"'
@@ -135,7 +133,7 @@ stdenv.mkDerivation rec {
     python3
     wrapQtAppsHook
     removeReferencesTo
-  ] ++ optionals stdenv.isLinux [
+  ] ++ lib.optionals stdenv.isLinux [
     # to build bundled libdispatch
     clang
   ];
@@ -155,7 +153,7 @@ stdenv.mkDerivation rec {
     rnnoise
     tg_owt
     microsoft_gsl
-  ] ++ optionals stdenv.isLinux [
+  ] ++ lib.optionals stdenv.isLinux [
     qtwayland
     alsa-lib
     libpulseaudio
@@ -166,7 +164,7 @@ stdenv.mkDerivation rec {
     boost
     fmt
     wayland
-  ] ++ optionals stdenv.isDarwin [
+  ] ++ lib.optionals stdenv.isDarwin [
     Cocoa
     CoreFoundation
     CoreServices
@@ -207,7 +205,7 @@ stdenv.mkDerivation rec {
     "-DTDESKTOP_API_TEST=ON"
   ];
 
-  installPhase = optionalString stdenv.isDarwin ''
+  installPhase = lib.optionalString stdenv.isDarwin ''
     mkdir -p $out/Applications
     cp -r ${mainProgram}.app $out/Applications
     ln -s $out/{Applications/${mainProgram}.app/Contents/MacOS,bin}
@@ -219,7 +217,7 @@ stdenv.mkDerivation rec {
     remove-references-to -t ${tg_owt.dev} $out/bin/${mainProgram}
   '';
 
-  postFixup = optionalString stdenv.isDarwin ''
+  postFixup = lib.optionalString stdenv.isDarwin ''
     wrapQtApp $out/Applications/${mainProgram}.app/Contents/MacOS/${mainProgram}
   '';
 
@@ -227,7 +225,7 @@ stdenv.mkDerivation rec {
     inherit tg_owt;
   };
 
-  meta = {
+  meta = with lib; {
     inherit mainProgram;
     description = "Kotatogram – experimental Telegram Desktop fork";
     longDescription = ''
