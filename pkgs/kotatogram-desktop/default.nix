@@ -14,7 +14,6 @@
 , qtimageformats
 , qtsvg
 , qtwayland
-, qt5compat
 , lz4
 , xxHash
 , ffmpeg
