@@ -78,20 +78,28 @@ in with pkgs; rec {
 
   silver = callPackage ./pkgs/silver {};
 
-  ttf-croscore = (import (import ./flake-compat.nix).inputs.nixpkgs-croscore {
-    system = stdenv.system;
-  }).noto-fonts.overrideAttrs(oldAttrs: {
-    pname = "ttf-croscore";
+  ttf-croscore =
+    let
+      lockedNixpkgsCroscore = (lib.importJSON ./flake.lock).nodes.nixpkgs-croscore.locked;
+      nixpkgs-croscore = import
+        (fetchFromGitHub {
+          inherit (lockedNixpkgsCroscore) owner repo rev;
+          hash = lockedNixpkgsCroscore.narHash;
+        })
+        { system = stdenv.system; };
+    in
+    nixpkgs-croscore.noto-fonts.overrideAttrs (oldAttrs: {
+      pname = "ttf-croscore";
 
-    installPhase = ''
-      install -m444 -Dt $out/share/fonts/truetype/croscore hinted/*/{Arimo,Cousine,Tinos}/*.ttf
-    '';
+      installPhase = ''
+        install -m444 -Dt $out/share/fonts/truetype/croscore hinted/*/{Arimo,Cousine,Tinos}/*.ttf
+      '';
 
-    meta = oldAttrs.meta // {
-      description = "Chrome OS core fonts";
-      longDescription = "This package includes the Arimo, Cousine, and Tinos fonts.";
-    };
-  });
+      meta = oldAttrs.meta // {
+        description = "Chrome OS core fonts";
+        longDescription = "This package includes the Arimo, Cousine, and Tinos fonts.";
+      };
+    });
 
   virtualboxWithExtpack = virtualbox.override {
     enableHardening = true;
