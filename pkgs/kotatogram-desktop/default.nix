@@ -205,6 +205,8 @@ stdenv.mkDerivation rec {
     "-DTDESKTOP_API_TEST=ON"
   ];
 
+  env.NIX_LDFLAGS = lib.optionalString stdenv.isDarwin "-ObjC";
+
   installPhase = lib.optionalString stdenv.isDarwin ''
     mkdir -p $out/Applications
     cp -r ${mainProgram}.app $out/Applications
