@@ -46,3 +46,18 @@ index 0495700..0f3fdd1 100644
  		result->setWindowFlags(Qt::FramelessWindowHint | Qt::Window);
  		result->setAttribute(Qt::WA_NativeWindow);
  		result->setAttribute(Qt::WA_DontCreateNativeAncestors);
+diff --git a/Telegram/lib_ui/ui/rp_widget.cpp b/Telegram/lib_ui/ui/rp_widget.cpp
+index 35fbe2f..ce661dd 100644
+--- a/Telegram/lib_ui/ui/rp_widget.cpp
++++ b/Telegram/lib_ui/ui/rp_widget.cpp
+@@ -25,8 +25,8 @@ public:
+ 		if (const auto config = q->rhiConfig()) {
+ 			return *config;
+ 		}
+-		if (::Platform::IsMac10_14OrGreater()) {
+-			return { QPlatformBackingStoreRhiConfig::Metal };
++		if constexpr (::Platform::IsMac()) {
++			return { QPlatformBackingStoreRhiConfig::OpenGL };
+ 		}
+ 		// We can't specify the widget here as q_evaluateRhiConfig is called
+ 		// in QWidgetWindow constructor, while windowHandle is set right after
