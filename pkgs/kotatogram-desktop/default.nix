@@ -104,6 +104,7 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./macos.patch
+    ./opengl.patch
     # lib_base: Add missing include for Qt 6.6
     (fetchpatch {
       url = "https://github.com/desktop-app/lib_base/commit/5ca91dbb811c84591780236abc31431e313faf39.patch";
