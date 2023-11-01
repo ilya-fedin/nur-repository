@@ -1,0 +1,15 @@
+diff --git a/cmake/libwebrtcbuild.cmake b/cmake/libwebrtcbuild.cmake
+index e16b1b2d..35d38aff 100644
+--- a/cmake/libwebrtcbuild.cmake
++++ b/cmake/libwebrtcbuild.cmake
+@@ -73,6 +73,10 @@ else()
+         INTERFACE
+             WEBRTC_MAC
+         )
++        target_link_options(libwebrtcbuild
++        INTERFACE
++            -ObjC
++        )
+     endif()
+ 
+     if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
