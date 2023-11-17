@@ -27,21 +27,7 @@
 , mesa
 , libdrm
 , libGL
-, Cocoa
-, AppKit
-, IOKit
-, IOSurface
-, Foundation
-, AVFoundation
-, CoreMedia
-, VideoToolbox
-, CoreGraphics
-, CoreVideo
-, OpenGL
-, Metal
-, MetalKit
-, CoreFoundation
-, ApplicationServices
+, darwin
 }:
 
 stdenv.mkDerivation {
@@ -92,7 +78,7 @@ stdenv.mkDerivation {
     mesa
     libdrm
     libGL
-  ] ++ lib.optionals stdenv.isDarwin [
+  ] ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
     Cocoa
     AppKit
     IOKit
@@ -108,7 +94,7 @@ stdenv.mkDerivation {
     MetalKit
     CoreFoundation
     ApplicationServices
-  ];
+  ]);
 
   enableParallelBuilding = true;
 

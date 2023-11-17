@@ -31,14 +31,8 @@ in with pkgs; rec {
   hplipWithPlugin = if stdenv.isLinux then pkgs.hplipWithPlugin else null;
 
   kotatogram-desktop = qt6.callPackage ./pkgs/kotatogram-desktop {
-    inherit (darwin.apple_sdk_11_0.frameworks) Cocoa CoreFoundation CoreServices CoreText CoreGraphics
-      CoreMedia OpenGL AudioUnit ApplicationServices Foundation AGL Security SystemConfiguration
-      Carbon AudioToolbox VideoToolbox VideoDecodeAcceleration AVFoundation CoreAudio CoreVideo
-      CoreMediaIO QuartzCore AppKit CoreWLAN WebKit IOKit GSS MediaPlayer IOSurface Metal MetalKit
-      NaturalLanguage;
-
     stdenv = if stdenv.isDarwin
-      then darwin.apple_sdk_11_0.stdenv
+      then overrideSDK stdenv "11.0"
       else stdenv;
 
     # tdesktop has random crashes when jemalloc is built with gcc.

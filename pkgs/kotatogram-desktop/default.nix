@@ -35,47 +35,13 @@
 , fmt
 , wayland
 , libicns
-, Cocoa
-, CoreFoundation
-, CoreServices
-, CoreText
-, CoreGraphics
-, CoreMedia
-, OpenGL
-, AudioUnit
-, ApplicationServices
-, Foundation
-, AGL
-, Security
-, SystemConfiguration
-, Carbon
-, AudioToolbox
-, VideoToolbox
-, VideoDecodeAcceleration
-, AVFoundation
-, CoreAudio
-, CoreVideo
-, CoreMediaIO
-, QuartzCore
-, AppKit
-, CoreWLAN
-, WebKit
-, IOKit
-, GSS
-, MediaPlayer
-, IOSurface
-, Metal
-, MetalKit
-, NaturalLanguage
+, darwin
 }:
 
 let
   tg_owt = callPackage ./tg_owt.nix {
     # tg_owt should use the same compiler
     inherit stdenv;
-
-    inherit Cocoa AppKit IOKit IOSurface Foundation AVFoundation CoreMedia VideoToolbox
-      CoreGraphics CoreVideo OpenGL Metal MetalKit CoreFoundation ApplicationServices;
   };
 
   cppgirPatch = fetchpatch {
@@ -160,7 +126,7 @@ stdenv.mkDerivation rec {
     boost
     fmt
     wayland
-  ] ++ lib.optionals stdenv.isDarwin [
+  ] ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk_11_0.frameworks; [
     Cocoa
     CoreFoundation
     CoreServices
@@ -193,7 +159,7 @@ stdenv.mkDerivation rec {
     Metal
     NaturalLanguage
     libicns
-  ];
+  ]);
 
   enableParallelBuilding = true;
 
