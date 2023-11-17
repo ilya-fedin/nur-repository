@@ -71,11 +71,6 @@
 
 let
   tg_owt = callPackage ./tg_owt.nix {
-    abseil-cpp = abseil-cpp.override {
-      # abseil-cpp should use the same compiler
-      inherit stdenv;
-    };
-
     # tg_owt should use the same compiler
     inherit stdenv;
 
