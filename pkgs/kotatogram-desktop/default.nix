@@ -7,6 +7,7 @@
 , cmake
 , ninja
 , clang
+, lld
 , python3
 , wrapQtAppsHook
 , removeReferencesTo
@@ -98,6 +99,8 @@ stdenv.mkDerivation rec {
   ] ++ lib.optionals stdenv.isLinux [
     # to build bundled libdispatch
     clang
+  ] ++ lib.optionals stdenv.isDarwin [
+    lld
   ];
 
   buildInputs = [
@@ -162,6 +165,10 @@ stdenv.mkDerivation rec {
   ]);
 
   enableParallelBuilding = true;
+
+  env = lib.optionalAttrs stdenv.isDarwin {
+    NIX_CFLAGS_LINK = "-fuse-ld=lld";
+  };
 
   cmakeFlags = [
     "-DTDESKTOP_API_TEST=ON"
