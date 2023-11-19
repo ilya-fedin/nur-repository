@@ -99,6 +99,7 @@ stdenv.mkDerivation rec {
   ] ++ lib.optionals stdenv.isLinux [
     # to build bundled libdispatch
     clang
+    gobject-introspection
   ] ++ lib.optionals stdenv.isDarwin [
     lld
   ];
@@ -123,7 +124,6 @@ stdenv.mkDerivation rec {
     alsa-lib
     libpulseaudio
     hunspell
-    gobject-introspection
     glibmm_2_68
     jemalloc
     boost
