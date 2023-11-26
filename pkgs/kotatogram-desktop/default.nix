@@ -65,6 +65,7 @@ stdenv.mkDerivation rec {
   };
 
   patches = [
+    ./new-glibmm-compatibility.patch
     ./macos.patch
     ./macos-opengl.patch
     # lib_base: Add missing include for Qt 6.6
