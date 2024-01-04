@@ -28,7 +28,6 @@
 , hunspell
 , gobject-introspection
 , glibmm_2_68
-, jemalloc
 , rnnoise
 , abseil-cpp
 , microsoft-gsl
@@ -45,40 +44,26 @@ let
     inherit stdenv;
   };
 
-  cppgirPatch = fetchpatch {
-    url = "https://gitlab.com/mnauw/cppgir/-/commit/960fe054ffaab7cf55722fea6094c56a8ee8f18e.patch";
-    sha256 = "sha256-puflGBLr7uilAGPNMmktJ4BXyDMYwwdO+XQtVur5Zp8=";
-  };
-
   mainProgram = if stdenv.isLinux then "kotatogram-desktop" else "Kotatogram";
 in
 stdenv.mkDerivation rec {
   pname = "kotatogram-desktop";
-  version = "unstable-2023-10-03";
+  version = "unstable-2024-01-05";
 
   src = fetchFromGitHub {
     owner = "ilya-fedin";
     repo = "kotatogram-desktop";
-    rev = "d66ac95e45696499dd21fe1b7d0a19d031a64649";
-    sha256 = "sha256-bf/m77PytoGLf8iCc08eVUsz7CMzTEit4UKhgzWoMr0=";
+    rev = "e17e1b4eb752b01d7f3b167937881f481018e18d";
+    sha256 = "sha256-5bX0HHWxYYD/xIMIoM6oW/BWPdOc8xG7jckaEh1S2xM=";
     fetchSubmodules = true;
   };
 
   patches = [
-    ./new-glibmm-compatibility.patch
     ./macos.patch
     ./macos-opengl.patch
-    # lib_base: Add missing include for Qt 6.6
-    (fetchpatch {
-      url = "https://github.com/desktop-app/lib_base/commit/5ca91dbb811c84591780236abc31431e313faf39.patch";
-      stripLen = 1;
-      extraPrefix = "Telegram/lib_base/";
-      hash = "sha256-eZkyMnPaAmUFYXiCmPhLRTw2Xdx0lylY+UVOckCsiaA=";
-    })
   ];
 
   postPatch = lib.optionalString stdenv.isLinux ''
-    patch -p1 -d cmake/external/glib/cppgir < ${cppgirPatch}
     substituteInPlace Telegram/ThirdParty/libtgvoip/os/linux/AudioInputALSA.cpp \
       --replace '"libasound.so.2"' '"${alsa-lib}/lib/libasound.so.2"'
     substituteInPlace Telegram/ThirdParty/libtgvoip/os/linux/AudioOutputALSA.cpp \
@@ -120,14 +105,13 @@ stdenv.mkDerivation rec {
     rnnoise
     tg_owt
     microsoft-gsl
+    boost
   ] ++ lib.optionals stdenv.isLinux [
     qtwayland
     alsa-lib
     libpulseaudio
     hunspell
     glibmm_2_68
-    jemalloc
-    boost
     fmt
     wayland
   ] ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk_11_0.frameworks; [

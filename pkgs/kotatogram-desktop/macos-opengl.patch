@@ -1,8 +1,8 @@
 diff --git a/Telegram/SourceFiles/media/view/media_view_pip.cpp b/Telegram/SourceFiles/media/view/media_view_pip.cpp
-index 4a0183d96..e42d417b6 100644
+index 655e7cf410..c356acbffe 100644
 --- a/Telegram/SourceFiles/media/view/media_view_pip.cpp
 +++ b/Telegram/SourceFiles/media/view/media_view_pip.cpp
-@@ -1340,7 +1340,7 @@ void Pip::setupStreaming() {
+@@ -1333,7 +1333,7 @@ void Pip::setupStreaming() {
  Ui::GL::ChosenRenderer Pip::chooseRenderer(
  		Ui::GL::Capabilities capabilities) {
  	const auto use = Platform::IsMac()
@@ -11,24 +11,12 @@ index 4a0183d96..e42d417b6 100644
  		: capabilities.transparency;
  	LOG(("OpenGL: %1 (PipPanel)").arg(Logs::b(use)));
  	if (use) {
-diff --git a/Telegram/SourceFiles/platform/mac/main_window_mac.mm b/Telegram/SourceFiles/platform/mac/main_window_mac.mm
-index 166c2ffac..8324ca82a 100644
---- a/Telegram/SourceFiles/platform/mac/main_window_mac.mm
-+++ b/Telegram/SourceFiles/platform/mac/main_window_mac.mm
-@@ -240,7 +240,6 @@ MainWindow::MainWindow(not_null<Window::Controller*> controller)
- : Window::MainWindow(controller)
- , _private(std::make_unique<Private>(this))
- , psMainMenu(this) {
--	auto forceOpenGL = std::make_unique<QOpenGLWidget>(this);
- 	_hideAfterFullScreenTimer.setCallback([this] { hideAndDeactivate(); });
- }
- 
 Submodule Telegram/lib_ui contains modified content
 diff --git a/Telegram/lib_ui/ui/gl/gl_detection.cpp b/Telegram/lib_ui/ui/gl/gl_detection.cpp
-index e200e9c..2247eec 100644
+index 150eb8b..c7ce9f9 100644
 --- a/Telegram/lib_ui/ui/gl/gl_detection.cpp
 +++ b/Telegram/lib_ui/ui/gl/gl_detection.cpp
-@@ -209,7 +209,7 @@ Capabilities CheckCapabilities(QWidget *widget) {
+@@ -236,7 +236,7 @@ Capabilities CheckCapabilities(QWidget *widget, bool avoidWidgetCreation) {
  
  Backend ChooseBackendDefault(Capabilities capabilities) {
  	const auto use = ::Platform::IsMac()
@@ -38,7 +26,7 @@ index e200e9c..2247eec 100644
  		? capabilities.supported
  		: capabilities.transparency;
 diff --git a/Telegram/lib_ui/ui/platform/mac/ui_window_mac.mm b/Telegram/lib_ui/ui/platform/mac/ui_window_mac.mm
-index 514ef32..848bbf1 100644
+index 7b29363..22c4fb3 100644
 --- a/Telegram/lib_ui/ui/platform/mac/ui_window_mac.mm
 +++ b/Telegram/lib_ui/ui/platform/mac/ui_window_mac.mm
 @@ -16,7 +16,6 @@
@@ -49,7 +37,7 @@ index 514ef32..848bbf1 100644
  #include <Cocoa/Cocoa.h>
  
  @interface WindowObserver : NSObject {
-@@ -135,7 +134,6 @@ public:
+@@ -138,7 +137,6 @@ public:
  
  private:
  	void init();
@@ -57,20 +45,18 @@ index 514ef32..848bbf1 100644
  	void resolveWeakPointers();
  	void revalidateWeakPointers() const;
  	void initCustomTitle();
-@@ -269,12 +267,6 @@ void WindowHelper::Private::enforceStyle() {
+@@ -272,10 +270,6 @@ void WindowHelper::Private::enforceStyle() {
  	}
  }
  
 -void WindowHelper::Private::initOpenGL() {
--#if QT_VERSION < QT_VERSION_CHECK(6, 4, 0)
 -	auto forceOpenGL = std::make_unique<QOpenGLWidget>(_owner->window());
--#endif // Qt < 6.4.0
 -}
 -
  void WindowHelper::Private::resolveWeakPointers() {
  	if (!_owner->window()->winId()) {
  		_owner->window()->createWinId();
-@@ -337,7 +329,6 @@ void WindowHelper::Private::initCustomTitle() {
+@@ -338,7 +332,6 @@ void WindowHelper::Private::initCustomTitle() {
  }
  
  void WindowHelper::Private::init() {
@@ -78,17 +64,3 @@ index 514ef32..848bbf1 100644
  	resolveWeakPointers();
  	initCustomTitle();
  }
-diff --git a/Telegram/lib_ui/ui/rp_widget.cpp b/Telegram/lib_ui/ui/rp_widget.cpp
-index 35fbe2f..7d56474 100644
---- a/Telegram/lib_ui/ui/rp_widget.cpp
-+++ b/Telegram/lib_ui/ui/rp_widget.cpp
-@@ -25,9 +25,6 @@ public:
- 		if (const auto config = q->rhiConfig()) {
- 			return *config;
- 		}
--		if (::Platform::IsMac10_14OrGreater()) {
--			return { QPlatformBackingStoreRhiConfig::Metal };
--		}
- 		// We can't specify the widget here as q_evaluateRhiConfig is called
- 		// in QWidgetWindow constructor, while windowHandle is set right after
- 		// the constructor is completed

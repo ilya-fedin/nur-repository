@@ -34,13 +34,6 @@ in with pkgs; rec {
     stdenv = if stdenv.isDarwin
       then overrideSDK stdenv "11.0"
       else stdenv;
-
-    # tdesktop has random crashes when jemalloc is built with gcc.
-    # Apparently, it triggers some bug due to usage of gcc's builtin
-    # functions like __builtin_ffsl by jemalloc when it's built with gcc.
-    jemalloc = (jemalloc.override { stdenv = clangStdenv; }).overrideAttrs(_: {
-      doCheck = false;
-    });
   };
 
   kotatogram-desktop-with-webkit = callPackage ./pkgs/kotatogram-desktop/with-webkit.nix {
