@@ -80,11 +80,6 @@ in with pkgs; rec {
     };
   });
 
-  virtualboxWithExtpack = virtualbox.override {
-    enableHardening = true;
-    extensionPack = virtualboxExtpack;
-  };
-
   #wlcs = callPackage ./pkgs/wlcs {};
 
   wlrootsqt = libsForQt5.callPackage ./pkgs/wlrootsqt {};
