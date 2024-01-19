@@ -9,8 +9,8 @@
   };
 
   outputs = { nixpkgs, ... }: let
-    lib = import (nixpkgs + "/lib");
-    forAllSystems = f: lib.genAttrs lib.systems.flakeExposed (system: f system);
+    inherit (nixpkgs) lib;
+    forAllSystems = f: lib.genAttrs lib.systems.flakeExposed f;
   in {
     packages = forAllSystems (system:
       lib.filterAttrs
