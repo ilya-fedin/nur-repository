@@ -59,10 +59,6 @@ in with pkgs; rec {
 
   qt5ct = import ./pkgs/qt5ct pkgs;
 
-  qtgreet = libsForQt5.callPackage ./pkgs/qtgreet {
-    inherit wlrootsqt;
-  };
-
   silver = callPackage ./pkgs/silver {};
 
   ttf-croscore = (import (import ./flake-compat.nix).inputs.nixpkgs-croscore {
@@ -79,8 +75,4 @@ in with pkgs; rec {
       longDescription = "This package includes the Arimo, Cousine, and Tinos fonts.";
     };
   });
-
-  #wlcs = callPackage ./pkgs/wlcs {};
-
-  wlrootsqt = libsForQt5.callPackage ./pkgs/wlrootsqt {};
 }) { inherit pkgs; }
