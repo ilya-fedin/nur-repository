@@ -44,11 +44,7 @@ in with pkgs; rec {
     inherit cmake-extras;
   };
 
-  mir = callPackage ./pkgs/mir {};
-
-  mirco = callPackage ./pkgs/mirco {
-    inherit mir;
-  };
+  mirco = callPackage ./pkgs/mirco {};
 
   nerd-fonts-symbols = callPackage ./pkgs/nerd-fonts-symbols {};
 
