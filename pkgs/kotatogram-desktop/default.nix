@@ -48,13 +48,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "kotatogram-desktop";
-  version = "unstable-2024-02-09";
+  version = "unstable-2024-02-16";
 
   src = fetchFromGitHub {
     owner = "ilya-fedin";
     repo = "kotatogram-desktop";
-    rev = "225243911ab97068127341dd7a2b44d5f6c45edc";
-    sha256 = "sha256-XrnPG9sibra9eewxfKVaqEJc5UTS9bQ3rA+VjDxHx0U=";
+    rev = "b6c92f9d3fd729aa7d7a8353baa4ecce4657ad3b";
+    sha256 = "sha256-oQdBvxXVVFObr7B586QWtuPfi23NufP/AgvmBjA3qeo=";
     fetchSubmodules = true;
   };
 
