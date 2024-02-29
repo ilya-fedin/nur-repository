@@ -24,6 +24,77 @@ in with pkgs; rec {
 
   cmake-extras = callPackage ./pkgs/cmake-extras {};
 
+  desktop-app = let
+    patches = fetchFromGitHub {
+      owner = "desktop-app";
+      repo = "patches";
+      rev = "bed08b53a3ce92323a34318094244838a8d4c5a9";
+      sha256 = "sha256-zaJD8+HqXLM2vMNl9siaU6qUIkeJmlhAb3w8Qh9jzBI=";
+    };
+  in {
+    qtbase = qt6.qtbase.overrideAttrs(oldAttrs: {
+      patches = oldAttrs.patches ++ [
+        "${patches}/qtbase_6.6.2/0001-spellcheck-underline-from-chrome.patch"
+        "${patches}/qtbase_6.6.2/0002-improve-apostrophe-processing.patch"
+        "${patches}/qtbase_6.6.2/0003-fix-shortcuts-on-macos.patch"
+        "${patches}/qtbase_6.6.2/0004-allow-creating-floating-panels-macos.patch"
+        "${patches}/qtbase_6.6.2/0005-fix-file-dialog-on-windows.patch"
+        "${patches}/qtbase_6.6.2/0006-fix-launching-mail-program-on-windows.patch"
+        "${patches}/qtbase_6.6.2/0007-save-dirtyopaquechildren.patch"
+        "${patches}/qtbase_6.6.2/0008-always-use-xft-font-conf.patch"
+        "${patches}/qtbase_6.6.2/0009-catch-cocoa-dock-menu.patch"
+        "${patches}/qtbase_6.6.2/0010-fix-race-in-windows-timers.patch"
+        "${patches}/qtbase_6.6.2/0011-nicer-platformtheme-choosing.patch"
+        "${patches}/qtbase_6.6.2/0012-reset-current-context-on-error.patch"
+        "${patches}/qtbase_6.6.2/0013-reset-opengl-widget-on-context-loss.patch"
+        "${patches}/qtbase_6.6.2/0014-no-jpeg-chroma-subsampling.patch"
+        "${patches}/qtbase_6.6.2/0015-convert-qimage-to-srgb.patch"
+        "${patches}/qtbase_6.6.2/0016-lcms2.patch"
+        "${patches}/qtbase_6.6.2/0017-better-color-scheme-support.patch"
+        "${patches}/qtbase_6.6.2/0018-translucent-captioned-window-on-windows.patch"
+        "${patches}/qtbase_6.6.2/0019-allow-bordered-translucent-macos.patch"
+        "${patches}/qtbase_6.6.2/0020-better-open-url-linux.patch"
+        "${patches}/qtbase_6.6.2/0021-follow-highdpi-rounding-policy-for-platform-dpr.patch"
+        "${patches}/qtbase_6.6.2/0022-highdpi-downscale-property.patch"
+        "${patches}/qtbase_6.6.2/0023-highdpi-downscale-wayland.patch"
+        "${patches}/qtbase_6.6.2/0024-highdpi-downscale-rhi.patch"
+        "${patches}/qtbase_6.6.2/0025-fill-transparent-hidpi-backing-store.patch"
+        #"${patches}/qtbase_6.6.2/0026-update-window-geometry-on-scale-change.patch"
+        "${patches}/qtbase_6.6.2/0027-fix-backing-store-rhi-unneeded-copy.patch"
+        "${patches}/qtbase_6.6.2/0028-fix-backing-store-opengl-subimage-unneeded-copy.patch"
+        "${patches}/qtbase_6.6.2/0029-glib-proxy-resolver.patch"
+      ];
+    });
+
+    qtwayland = qt6.qtwayland.overrideAttrs(oldAttrs: {
+      patches = oldAttrs.patches ++ [
+        "${patches}/qtwayland_6.6.2/0001-always-fractional-scale.patch"
+        "${patches}/qtwayland_6.6.2/0002-offload-transparency-filling-to-hidpi.patch"
+        "${patches}/qtwayland_6.6.2/0003-popup-reposition.patch"
+        "${patches}/qtwayland_6.6.2/0004-fix-gtk4-embedding.patch"
+        "${patches}/qtwayland_6.6.2/0005-QWaylandShmBackingStore-Preserve-buffer-contents-bet.patch"
+        "${patches}/qtwayland_6.6.2/0006-fix-text-input-coordinates.patch"
+        "${patches}/qtwayland_6.6.2/0007-avoid-needlessly-initiailizing-opengl.patch"
+      ];
+    });
+
+    with-patched-qt = drv: (lib.foldr ({ oldDependency, newDependency }: drv:
+      replaceDependency { inherit oldDependency newDependency drv; }
+    ) drv ([
+      {
+        oldDependency = qt6.qtbase;
+        newDependency = desktop-app.qtbase;
+      }
+    ] ++ lib.optionals stdenv.isLinux [
+      {
+        oldDependency = qt6.qtwayland;
+        newDependency = desktop-app.qtwayland;
+      }
+    ])).overrideAttrs {
+      meta = drv.meta;
+    };
+  };
+
   exo2 = callPackage ./pkgs/exo2 {};
 
   gtk-layer-background = callPackage ./pkgs/gtk-layer-background {};
@@ -39,6 +110,10 @@ in with pkgs; rec {
   kotatogram-desktop-with-webkit = callPackage ./pkgs/kotatogram-desktop/with-webkit.nix {
     inherit kotatogram-desktop;
   };
+
+  kotatogram-desktop-with-patched-qt = desktop-app.with-patched-qt kotatogram-desktop;
+
+  kotatogram-desktop-with-patched-qt-and-webkit = if stdenv.isLinux then desktop-app.with-patched-qt kotatogram-desktop-with-webkit else null;
 
   libayatana-common = callPackage ./pkgs/libayatana-common {
     inherit cmake-extras;
