@@ -130,6 +130,8 @@ in with pkgs; rec {
 
   qt5ct = import ./pkgs/qt5ct pkgs;
 
+  qt6ct = import ./pkgs/qt6ct pkgs;
+
   silver = callPackage ./pkgs/silver {};
 
   ttf-croscore = (import (import ./flake-compat.nix).inputs.nixpkgs-croscore {
