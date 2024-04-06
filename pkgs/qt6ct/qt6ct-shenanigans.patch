@@ -51,7 +51,7 @@ index c3d7498..0c78445 100644
 +target_link_libraries(qt6ct-qtplugin PRIVATE Qt6::Widgets Qt6::GuiPrivate Qt6::QuickControls2 KF6::ConfigCore KF6::ColorScheme KF6::IconThemes qt6ct-common)
  install(TARGETS qt6ct-qtplugin DESTINATION ${PLUGINDIR}/platformthemes)
 diff --git a/src/qt6ct-qtplugin/qt6ctplatformtheme.cpp b/src/qt6ct-qtplugin/qt6ctplatformtheme.cpp
-index 1d13faf..2747c35 100644
+index 1d13faf..c6671b5 100644
 --- a/src/qt6ct-qtplugin/qt6ctplatformtheme.cpp
 +++ b/src/qt6ct-qtplugin/qt6ctplatformtheme.cpp
 @@ -44,6 +44,7 @@
@@ -79,7 +79,7 @@ index 1d13faf..2747c35 100644
  #endif
          QGuiApplication::setFont(m_generalFont);
 +        //don't override the value explicitly set by the user
-+        if (QQuickStyle::name().isEmpty()) {
++        if (QQuickStyle::name().isEmpty() || QQuickStyle::name() == QLatin1String("Fusion")) {
 +            QQuickStyle::setStyle(QLatin1String("org.kde.desktop"));
 +        }
      }
