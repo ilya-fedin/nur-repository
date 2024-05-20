@@ -12,7 +12,7 @@ jobs:
       cache-key: ${{ steps.cache-key.outputs.cache-key }}
     steps:
     - uses: actions/checkout@v4
-    - uses: cachix/install-nix-action@v26
+    - uses: cachix/install-nix-action@V27
     - run: nix flake update
       if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     - run: echo "cache-key=${{ hashFiles('flake.lock') }}" >> $GITHUB_OUTPUT
@@ -34,7 +34,7 @@ jobs:
       with:
         path: flake.lock
         key: flake-lock-${{ needs.update-flake.outputs.cache-key }}
-    - uses: cachix/install-nix-action@v26
+    - uses: cachix/install-nix-action@V27
     - uses: cachix/cachix-action@v14
       with:
         name: ilya-fedin
