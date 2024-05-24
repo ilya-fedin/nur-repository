@@ -28,53 +28,62 @@ in with pkgs; rec {
     patches = fetchFromGitHub {
       owner = "desktop-app";
       repo = "patches";
-      rev = "ab24db42b93a0f6ccb10182c4e6bb720227876f8";
-      sha256 = "sha256-pH6auLgsFybqvJQ6Uck48S2TCf7t5aFcwTkKsV/RQnk=";
+      rev = "803f1c2630f5eb0d3b00ba3f095b3079c0533156";
+      sha256 = "sha256-hUCnoXOcAxvJbspK55fdF56dmMGA+tPoQGNFeEws8lE=";
     };
-  in {
+  in rec {
     qtbase = qt6.qtbase.overrideAttrs(oldAttrs: {
       patches = oldAttrs.patches ++ [
-        "${patches}/qtbase_6.7.0/0001-spellcheck-underline-from-chrome.patch"
-        "${patches}/qtbase_6.7.0/0002-improve-apostrophe-processing.patch"
-        "${patches}/qtbase_6.7.0/0003-fix-shortcuts-on-macos.patch"
-        "${patches}/qtbase_6.7.0/0004-allow-creating-floating-panels-macos.patch"
-        "${patches}/qtbase_6.7.0/0005-fix-file-dialog-on-windows.patch"
-        "${patches}/qtbase_6.7.0/0006-fix-launching-mail-program-on-windows.patch"
-        "${patches}/qtbase_6.7.0/0007-save-dirtyopaquechildren.patch"
-        "${patches}/qtbase_6.7.0/0008-always-use-xft-font-conf.patch"
-        "${patches}/qtbase_6.7.0/0009-catch-cocoa-dock-menu.patch"
-        "${patches}/qtbase_6.7.0/0010-fix-race-in-windows-timers.patch"
-        "${patches}/qtbase_6.7.0/0011-nicer-platformtheme-choosing.patch"
-        "${patches}/qtbase_6.7.0/0012-reset-current-context-on-error.patch"
-        "${patches}/qtbase_6.7.0/0013-reset-opengl-widget-on-context-loss.patch"
-        "${patches}/qtbase_6.7.0/0014-no-jpeg-chroma-subsampling.patch"
-        "${patches}/qtbase_6.7.0/0015-convert-qimage-to-srgb.patch"
-        "${patches}/qtbase_6.7.0/0016-lcms2.patch"
-        "${patches}/qtbase_6.7.0/0017-better-color-scheme-support.patch"
-        "${patches}/qtbase_6.7.0/0018-translucent-captioned-window-on-windows.patch"
-        "${patches}/qtbase_6.7.0/0019-allow-bordered-translucent-macos.patch"
-        "${patches}/qtbase_6.7.0/0020-better-open-url-linux.patch"
-        "${patches}/qtbase_6.7.0/0021-follow-highdpi-rounding-policy-for-platform-dpr.patch"
-        "${patches}/qtbase_6.7.0/0022-highdpi-downscale-property.patch"
-        "${patches}/qtbase_6.7.0/0023-highdpi-downscale-wayland.patch"
-        "${patches}/qtbase_6.7.0/0024-fill-transparent-hidpi-backing-store.patch"
-        #"${patches}/qtbase_6.7.0/0025-update-window-geometry-on-scale-change.patch"
-        "${patches}/qtbase_6.7.0/0026-fix-backing-store-rhi-unneeded-copy.patch"
-        "${patches}/qtbase_6.7.0/0027-fix-backing-store-opengl-subimage-unneeded-copy.patch"
-        "${patches}/qtbase_6.7.0/0028-portal-proxy-resolver.patch"
-        "${patches}/qtbase_6.7.0/0029-fix-crash-opengl-drivers.patch"
+        "${patches}/qtbase_6.7.1/0001-spellcheck-underline-from-chrome.patch"
+        "${patches}/qtbase_6.7.1/0002-improve-apostrophe-processing.patch"
+        #"${patches}/qtbase_6.7.1/0003-fix-shortcuts-on-macos.patch"
+        "${patches}/qtbase_6.7.1/0004-allow-creating-floating-panels-macos.patch"
+        "${patches}/qtbase_6.7.1/0005-fix-file-dialog-on-windows.patch"
+        "${patches}/qtbase_6.7.1/0006-fix-launching-mail-program-on-windows.patch"
+        "${patches}/qtbase_6.7.1/0007-save-dirtyopaquechildren.patch"
+        "${patches}/qtbase_6.7.1/0008-always-use-xft-font-conf.patch"
+        "${patches}/qtbase_6.7.1/0009-catch-cocoa-dock-menu.patch"
+        "${patches}/qtbase_6.7.1/0010-fix-race-in-windows-timers.patch"
+        "${patches}/qtbase_6.7.1/0011-nicer-platformtheme-choosing.patch"
+        "${patches}/qtbase_6.7.1/0012-reset-current-context-on-error.patch"
+        "${patches}/qtbase_6.7.1/0013-reset-opengl-widget-on-context-loss.patch"
+        "${patches}/qtbase_6.7.1/0014-no-jpeg-chroma-subsampling.patch"
+        "${patches}/qtbase_6.7.1/0015-convert-qimage-to-srgb.patch"
+        "${patches}/qtbase_6.7.1/0016-lcms2.patch"
+        "${patches}/qtbase_6.7.1/0017-better-color-scheme-support.patch"
+        "${patches}/qtbase_6.7.1/0018-translucent-captioned-window-on-windows.patch"
+        "${patches}/qtbase_6.7.1/0019-allow-bordered-translucent-macos.patch"
+        "${patches}/qtbase_6.7.1/0020-better-open-url-linux.patch"
+        "${patches}/qtbase_6.7.1/0021-follow-highdpi-rounding-policy-for-platform-dpr.patch"
+        "${patches}/qtbase_6.7.1/0022-highdpi-downscale-property.patch"
+        "${patches}/qtbase_6.7.1/0023-highdpi-downscale-wayland.patch"
+        "${patches}/qtbase_6.7.1/0024-fill-transparent-hidpi-backing-store.patch"
+        #"${patches}/qtbase_6.7.1/0025-update-window-geometry-on-scale-change.patch"
+        "${patches}/qtbase_6.7.1/0026-fix-backing-store-rhi-unneeded-copy.patch"
+        "${patches}/qtbase_6.7.1/0027-fix-backing-store-opengl-subimage-unneeded-copy.patch"
+        "${patches}/qtbase_6.7.1/0028-portal-proxy-resolver.patch"
+        "${patches}/qtbase_6.7.1/0029-fix-focus-in-hidden-window.patch"
+        "${patches}/qtbase_6.7.1/0030-fix-only-emoji-line.patch"
       ];
     });
 
-    qtwayland = qt6.qtwayland.overrideAttrs(oldAttrs: {
+    qtwayland = (qt6.qtwayland.override {
+      inherit qtbase;
+      qtdeclarative = replaceDependency {
+        oldDependency = qt6.qtbase;
+        newDependency = qtbase;
+        drv = qt6.qtdeclarative;
+      };
+    }).overrideAttrs(oldAttrs: {
       patches = oldAttrs.patches ++ [
-        "${patches}/qtwayland_6.7.0/0001-always-fractional-scale.patch"
-        "${patches}/qtwayland_6.7.0/0002-offload-transparency-filling-to-hidpi.patch"
-        "${patches}/qtwayland_6.7.0/0003-popup-reposition.patch"
-        "${patches}/qtwayland_6.7.0/0004-fix-gtk4-embedding.patch"
-        "${patches}/qtwayland_6.7.0/0005-QWaylandShmBackingStore-Preserve-buffer-contents-bet.patch"
-        "${patches}/qtwayland_6.7.0/0006-avoid-needlessly-initiailizing-opengl.patch"
-        "${patches}/qtwayland_6.7.0/0007-fix-media-viewer-on-gnome.patch"
+        "${patches}/qtwayland_6.7.1/0001-always-fractional-scale.patch"
+        "${patches}/qtwayland_6.7.1/0002-offload-transparency-filling-to-hidpi.patch"
+        "${patches}/qtwayland_6.7.1/0003-popup-reposition.patch"
+        "${patches}/qtwayland_6.7.1/0004-fix-gtk4-embedding.patch"
+        "${patches}/qtwayland_6.7.1/0005-QWaylandShmBackingStore-Preserve-buffer-contents-bet.patch"
+        "${patches}/qtwayland_6.7.1/0006-avoid-needlessly-initiailizing-opengl.patch"
+        #"${patches}/qtwayland_6.7.1/0007-fix-media-viewer-on-gnome.patch"
+        "${patches}/qtwayland_6.7.1/0008-owning-rhi-backing-store.patch"
       ];
     });
 
