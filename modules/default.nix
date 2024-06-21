@@ -8,7 +8,5 @@
   vscode = import ./vscode;
   qt5ct = import ./qt5ct;
   qt6ct = import ./qt6ct;
-  flatpak-fonts = import ./flatpak-fonts;
-  flatpak-icons = import ./flatpak-icons;
   unified-kernel-image = import ./unified-kernel-image;
 }
