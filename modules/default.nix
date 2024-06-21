@@ -4,7 +4,6 @@
   metric-compatible-fonts = import ./metric-compatible-fonts;
   noto-cjk = import ./noto-cjk;
   io-scheduler = import ./io-scheduler;
-  mate-wayland = import ./mate-wayland;
   nixpkgs-niv = import ./nixpkgs-niv;
   vscode = import ./vscode;
   qt5ct = import ./qt5ct;

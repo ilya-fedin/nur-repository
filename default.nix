@@ -9,20 +9,10 @@ in with pkgs; rec {
 
   overlays = import ./overlays;
 
-  ayatana-indicator-keyboard = callPackage ./pkgs/ayatana-indicator-keyboard {
-    inherit cmake-extras libayatana-common;
-  };
-
-  ayatana-indicator-power = callPackage ./pkgs/ayatana-indicator-power {
-    inherit cmake-extras libayatana-common;
-  };
-
   cascadia-code-powerline = runCommand "cascadia-code-powerline" {} ''
     install -m644 --target $out/share/fonts/opentype -D ${cascadia-code}/share/fonts/opentype/CascadiaCodePL-*.otf
     install -m644 --target $out/share/fonts/truetype -D ${cascadia-code}/share/fonts/truetype/CascadiaCodePL-*.ttf
   '';
-
-  cmake-extras = callPackage ./pkgs/cmake-extras {};
 
   desktop-app = let
     patches = fetchFromGitHub {
@@ -106,8 +96,6 @@ in with pkgs; rec {
 
   exo2 = callPackage ./pkgs/exo2 {};
 
-  gtk-layer-background = callPackage ./pkgs/gtk-layer-background {};
-
   hplipWithPlugin = if stdenv.isLinux then pkgs.hplipWithPlugin else null;
 
   kotatogram-desktop = qt6.callPackage ./pkgs/kotatogram-desktop {
@@ -123,12 +111,6 @@ in with pkgs; rec {
   kotatogram-desktop-with-patched-qt = desktop-app.with-patched-qt kotatogram-desktop;
 
   kotatogram-desktop-with-patched-qt-and-webkit = if stdenv.isLinux then desktop-app.with-patched-qt kotatogram-desktop-with-webkit else null;
-
-  libayatana-common = callPackage ./pkgs/libayatana-common {
-    inherit cmake-extras;
-  };
-
-  mirco = callPackage ./pkgs/mirco {};
 
   nerd-fonts-symbols = callPackage ./pkgs/nerd-fonts-symbols {};
 
