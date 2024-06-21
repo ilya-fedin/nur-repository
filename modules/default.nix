@@ -11,5 +11,4 @@
   flatpak-fonts = import ./flatpak-fonts;
   flatpak-icons = import ./flatpak-icons;
   unified-kernel-image = import ./unified-kernel-image;
-  qtgreet = import ./qtgreet;
 }
