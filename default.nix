@@ -98,7 +98,7 @@ in with pkgs; rec {
 
   hplipWithPlugin = if stdenv.isLinux then pkgs.hplipWithPlugin else null;
 
-  kotatogram-desktop = qt6.callPackage ./pkgs/kotatogram-desktop {
+  kotatogram-desktop = kdePackages.callPackage ./pkgs/kotatogram-desktop {
     stdenv = if stdenv.isDarwin
       then overrideSDK stdenv "11.0"
       else stdenv;

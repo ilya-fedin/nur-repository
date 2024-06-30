@@ -1,7 +1,6 @@
 { lib
 , stdenv
 , fetchFromGitHub
-, fetchpatch
 , callPackage
 , pkg-config
 , cmake
@@ -15,6 +14,7 @@
 , qtimageformats
 , qtsvg
 , qtwayland
+, kcoreaddons
 , lz4
 , xxHash
 , ffmpeg
@@ -28,6 +28,7 @@
 , hunspell
 , gobject-introspection
 , glibmm_2_68
+, jemalloc
 , rnnoise
 , abseil-cpp
 , microsoft-gsl
@@ -48,13 +49,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "kotatogram-desktop";
-  version = "unstable-2024-02-16";
+  version = "unstable-2024-07-01";
 
   src = fetchFromGitHub {
     owner = "ilya-fedin";
     repo = "kotatogram-desktop";
-    rev = "b6c92f9d3fd729aa7d7a8353baa4ecce4657ad3b";
-    sha256 = "sha256-oQdBvxXVVFObr7B586QWtuPfi23NufP/AgvmBjA3qeo=";
+    rev = "ad9f7f19ac8093953b21e01cc9fc2e0193fe8e53";
+    sha256 = "sha256-S9G6EY1mlf4eK5VHdD1LicZcoQ11MBtbzje7S+P/zX8=";
     fetchSubmodules = true;
   };
 
@@ -111,10 +112,12 @@ stdenv.mkDerivation rec {
     boost
   ] ++ lib.optionals stdenv.isLinux [
     qtwayland
+    kcoreaddons
     alsa-lib
     libpulseaudio
     hunspell
     glibmm_2_68
+    jemalloc
     fmt
     wayland
   ] ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk_11_0.frameworks; [
