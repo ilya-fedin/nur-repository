@@ -31,7 +31,6 @@
 , rnnoise
 , microsoft-gsl
 , boost
-, wayland
 , libicns
 , darwin
 }:
@@ -46,13 +45,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "kotatogram-desktop";
-  version = "0-unstable-2024-09-01";
+  version = "0-unstable-2024-10-01";
 
   src = fetchFromGitHub {
     owner = "ilya-fedin";
     repo = "kotatogram-desktop";
-    rev = "804d8869afcff0e04ede0df6c7e9ecf6c1fa4b14";
-    hash = "sha256-ycR06mocKZX1QGjeOrhf2tRFbxWObfeRyTgr9y83iK8=";
+    rev = "fc8a776b726d1fa5cc6fed3d75676ca159981999";
+    hash = "sha256-A6mEcXHTQpuV93/hwZuHEG8X+2CwHwfjjtkWyYQSWF8=";
     fetchSubmodules = true;
   };
 
@@ -114,7 +113,6 @@ stdenv.mkDerivation rec {
     libpulseaudio
     hunspell
     jemalloc
-    wayland
   ] ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk_11_0.frameworks; [
     Cocoa
     CoreFoundation
