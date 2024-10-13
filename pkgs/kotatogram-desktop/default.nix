@@ -45,7 +45,7 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "kotatogram-desktop";
-  version = "0-unstable-2024-10-01";
+  version = "1.4.9-unstable-2024-10-01";
 
   src = fetchFromGitHub {
     owner = "ilya-fedin";
