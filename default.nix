@@ -19,7 +19,7 @@ in with pkgs; rec {
       owner = "desktop-app";
       repo = "patches";
       rev = "20a7c5ffd8265fc6e45203ea2536f7b1965be19a";
-      sha256 = "sha256-guz5+RWL1y7gNcS56xvLcydBKedj3kG+lQsAe7IuPA4=";
+      hash = "sha256-guz5+RWL1y7gNcS56xvLcydBKedj3kG+lQsAe7IuPA4=";
     };
   in rec {
     qtbase = qt6.qtbase.overrideAttrs(oldAttrs: {
