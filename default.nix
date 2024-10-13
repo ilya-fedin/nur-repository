@@ -90,7 +90,7 @@ in with pkgs; rec {
     };
   };
 
-  exo2 = callPackage ./pkgs/exo2 {};
+  exo2 = google-fonts.override { fonts = [ "Exo2" ]; };
 
   hplipWithPlugin = if stdenv.isLinux then pkgs.hplipWithPlugin else null;
 
@@ -108,7 +108,7 @@ in with pkgs; rec {
 
   kotatogram-desktop-with-patched-qt-and-webkit = if stdenv.isLinux then desktop-app.with-patched-qt kotatogram-desktop-with-webkit else null;
 
-  nerd-fonts-symbols = callPackage ./pkgs/nerd-fonts-symbols {};
+  nerd-fonts-symbols = nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; };
 
   nixos-collect-garbage = writeShellScriptBin "nixos-collect-garbage" ''
     ${nix}/bin/nix-collect-garbage "$@"
@@ -121,18 +121,5 @@ in with pkgs; rec {
 
   silver = callPackage ./pkgs/silver {};
 
-  ttf-croscore = (import (import ./flake-compat.nix).inputs.nixpkgs-croscore {
-    system = stdenv.system;
-  }).noto-fonts.overrideAttrs(oldAttrs: {
-    pname = "ttf-croscore";
-
-    installPhase = ''
-      install -m444 -Dt $out/share/fonts/truetype/croscore hinted/*/{Arimo,Cousine,Tinos}/*.ttf
-    '';
-
-    meta = oldAttrs.meta // {
-      description = "Chrome OS core fonts";
-      longDescription = "This package includes the Arimo, Cousine, and Tinos fonts.";
-    };
-  });
+  ttf-croscore = google-fonts.override { fonts = [ "Arimo" "Cousine" "Tinos" ]; };
 }) { inherit pkgs; }
