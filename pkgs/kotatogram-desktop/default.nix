@@ -9,7 +9,6 @@
 , lld
 , python3
 , wrapQtAppsHook
-, removeReferencesTo
 , qtbase
 , qtimageformats
 , qtsvg
@@ -42,11 +41,12 @@ let
     inherit stdenv;
   };
 
+  version = "1.4.9";
   mainProgram = if stdenv.hostPlatform.isLinux then "kotatogram-desktop" else "Kotatogram";
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "kotatogram-desktop";
-  version = "1.4.9-unstable-2024-10-01";
+  version = "${version}-unstable-2024-10-01";
 
   src = fetchFromGitHub {
     owner = "ilya-fedin";
@@ -82,7 +82,6 @@ stdenv.mkDerivation rec {
     ninja
     python3
     wrapQtAppsHook
-    removeReferencesTo
   ] ++ lib.optionals stdenv.hostPlatform.isLinux [
     # to build bundled libdispatch
     clang
@@ -164,12 +163,6 @@ stdenv.mkDerivation rec {
     ln -s $out/{Applications/${mainProgram}.app/Contents/MacOS,bin}
   '';
 
-  preFixup = ''
-    remove-references-to -t ${stdenv.cc.cc} $out/bin/${mainProgram}
-    remove-references-to -t ${microsoft-gsl} $out/bin/${mainProgram}
-    remove-references-to -t ${tg_owt.dev} $out/bin/${mainProgram}
-  '';
-
   postFixup = lib.optionalString stdenv.hostPlatform.isDarwin ''
     wrapQtApp $out/Applications/${mainProgram}.app/Contents/MacOS/${mainProgram}
   '';
@@ -186,10 +179,10 @@ stdenv.mkDerivation rec {
 
       It contains some useful (or purely cosmetic) features, but they could be unstable. A detailed list is available here: https://kotatogram.github.io/changes
     '';
-    license = licenses.gpl3;
+    license = licenses.gpl3Only;
     platforms = platforms.all;
     homepage = "https://kotatogram.github.io";
-    changelog = "https://github.com/kotatogram/kotatogram-desktop/releases/tag/k{version}";
+    changelog = "https://github.com/kotatogram/kotatogram-desktop/releases/tag/k${version}";
     maintainers = with maintainers; [ ilya-fedin ];
   };
 }
