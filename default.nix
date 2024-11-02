@@ -80,7 +80,7 @@ in with pkgs; rec {
         oldDependency = qt6.qtbase;
         newDependency = desktop-app.qtbase;
       }
-    ] ++ lib.optionals stdenv.isLinux [
+    ] ++ lib.optionals stdenv.hostPlatform.isLinux [
       {
         oldDependency = qt6.qtwayland;
         newDependency = desktop-app.qtwayland;
@@ -92,10 +92,10 @@ in with pkgs; rec {
 
   exo2 = google-fonts.override { fonts = [ "Exo2" ]; };
 
-  hplipWithPlugin = if stdenv.isLinux then pkgs.hplipWithPlugin else null;
+  hplipWithPlugin = if stdenv.hostPlatform.isLinux then pkgs.hplipWithPlugin else null;
 
   kotatogram-desktop = kdePackages.callPackage ./pkgs/kotatogram-desktop {
-    stdenv = if stdenv.isDarwin
+    stdenv = if stdenv.hostPlatform.isDarwin
       then overrideSDK stdenv "11.0"
       else stdenv;
   };
@@ -106,7 +106,7 @@ in with pkgs; rec {
 
   kotatogram-desktop-with-patched-qt = desktop-app.with-patched-qt kotatogram-desktop;
 
-  kotatogram-desktop-with-patched-qt-and-webkit = if stdenv.isLinux then desktop-app.with-patched-qt kotatogram-desktop-with-webkit else null;
+  kotatogram-desktop-with-patched-qt-and-webkit = if stdenv.hostPlatform.isLinux then desktop-app.with-patched-qt kotatogram-desktop-with-webkit else null;
 
   nerd-fonts-symbols = nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; };
 
