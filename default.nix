@@ -121,5 +121,9 @@ in with pkgs; rec {
 
   silver = callPackage ./pkgs/silver {};
 
+  termbin = writeShellScriptBin "tb" ''
+    exec ${netcat}/bin/nc termbin.com 9999
+  '';
+
   ttf-croscore = google-fonts.override { fonts = [ "Arimo" "Cousine" "Tinos" ]; };
 }) { inherit pkgs; }
