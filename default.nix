@@ -18,7 +18,7 @@ in with pkgs; rec {
 
   hplipWithPlugin = if stdenv.hostPlatform.isLinux then pkgs.hplipWithPlugin else null;
 
-  nerd-fonts-symbols = nerdfonts.override { fonts = [ "NerdFontsSymbolsOnly" ]; };
+  nerd-fonts-symbols = nerd-fonts.symbols-only;
 
   nixos-collect-garbage = writeShellScriptBin "nixos-collect-garbage" ''
     ${nix}/bin/nix-collect-garbage "$@"
