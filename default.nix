@@ -25,8 +25,6 @@ in with pkgs; rec {
     /run/current-system/bin/switch-to-configuration boot
   '';
 
-  qt5ct = import ./pkgs/qt5ct pkgs;
-
   qt6ct = import ./pkgs/qt6ct pkgs;
 
   silver = callPackage ./pkgs/silver {};
