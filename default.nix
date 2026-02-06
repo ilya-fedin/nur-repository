@@ -11,16 +11,9 @@ in with pkgs; rec {
 
   airsane = callPackage ./pkgs/airsane {};
 
-  cascadia-code-powerline = runCommand "cascadia-code-powerline" {} ''
-    install -m644 --target $out/share/fonts/opentype -D ${cascadia-code}/share/fonts/opentype/CascadiaCodePL-*.otf
-    install -m644 --target $out/share/fonts/truetype -D ${cascadia-code}/share/fonts/truetype/CascadiaCodePL-*.ttf
-  '';
-
   exo2 = google-fonts.override { fonts = [ "Exo2" ]; };
 
   hplipWithPlugin = if stdenv.hostPlatform.isLinux then pkgs.hplipWithPlugin else null;
-
-  nerd-fonts-symbols = nerd-fonts.symbols-only;
 
   nixos-collect-garbage = writeShellScriptBin "nixos-collect-garbage" ''
     ${nix}/bin/nix-collect-garbage "$@"
@@ -36,6 +29,4 @@ in with pkgs; rec {
   termbin = writeShellScriptBin "tb" ''
     exec ${netcat}/bin/nc termbin.com 9999
   '';
-
-  ttf-croscore = google-fonts.override { fonts = [ "Arimo" "Cousine" "Tinos" ]; };
 }) { inherit pkgs; }
