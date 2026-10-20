@@ -1,7 +1,8 @@
-{ pkgs ? null }: (args: let
+{ pkgs ? null, system ? builtins.currentSystem }: (args: let
   pkgs = if (builtins.tryEval args.pkgs).success && args.pkgs != null
     then args.pkgs
     else import (import ./flake-compat.nix).inputs.nixpkgs {
+      inherit system;
       config = import ./nixpkgs-config.nix;
     };
 in with pkgs; rec {
@@ -32,4 +33,6 @@ in with pkgs; rec {
   termbin = writeShellScriptBin "tb" ''
     exec ${netcat}/bin/nc termbin.com 9999
   '';
+
+  ttf-croscore = google-fonts.override { fonts = [ "Arimo" "Cousine" "Tinos" ]; };
 }) { inherit pkgs; }

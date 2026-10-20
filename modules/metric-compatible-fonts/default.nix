@@ -2,7 +2,7 @@
 
 with lib;
 let
-  customPkgs = import ../.. { inherit pkgs; };
+  customPkgs = import ../.. { system = pkgs.stdenv.hostPlatform.system; };
 
   cfg = config.fonts.fontconfig;
 
@@ -105,7 +105,7 @@ in {
 
   config = mkIf cfg.crOSMaps {
     fonts.packages = with pkgs; with customPkgs; [
-      (google-fonts.override { fonts = [ "Arimo" "Cousine" "Tinos" ]; })
+      ttf-croscore
       carlito
       caladea
     ];
